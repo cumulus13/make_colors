@@ -32,7 +32,7 @@ class Win10Colors(object):
         #             inverse = '7m'
 
         fore_color_bank = {
-                'black': '30m',
+            'black': '30m',
                 'red': '31m',
                 'green': '32m',
                 'yellow': '33m',
@@ -51,10 +51,10 @@ class Win10Colors(object):
                 'lightcyan': '96m',
                 'lightwhite': '97m',
 
-            }
+        }
 
         back_color_bank = {
-                'black': '40m',
+            'black': '40m',
                 'red': '41m',
                 'green': '42m',
                 'yellow': '43m',
@@ -92,7 +92,7 @@ class Win10Colors(object):
                 'on_lightcyan': '106m',
                 'on_lightwhite': '107m',
 
-            }
+        }
 
         background = back_color_bank.get(background)
         foreground = fore_color_bank.get(foreground)
@@ -188,8 +188,8 @@ def make_colors(string, foreground = 'white', background=None, attrs=[]):
         foreground, background = getSort(foreground)
     win10color = Win10Colors()
     if os.getenv('MAKE_COLORS') == '0':
-		return string
+        return string
     elif os.getenv('MAKE_COLORS') == '1':
-		return win10color.colored(string, foreground, background, attrs)
+        return win10color.colored(string, foreground, background, attrs)
     else:
-		return win10color.colored(string, foreground, background, attrs)
+        return win10color.colored(string, foreground, background, attrs)
