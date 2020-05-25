@@ -103,9 +103,10 @@ class Win10Colors(object):
 
         return "[%s;%s%s[0m" % (background[:-1], foreground, string)
 
-def getSort(data):
-    if "-" in data or "_" in data:
-        foreground, background = re.split("-|_", data)
+def getSort(data=None, foreground='', background=''):
+    if data:
+        if "-" in data or "_" in data:
+            foreground, background = re.split("-|_", data)
         # 'black': '40m',
         #         'red': '41m',
         #         'green': '42m',
@@ -114,7 +115,7 @@ def getSort(data):
         #         'magenta': '45m',
         #         'cyan': '46m',
         #         'white': '47m',
-
+    if foreground or background:
         if foreground == 'b':
             foreground = 'black'
         elif foreground == 'bl':
@@ -180,12 +181,21 @@ def getSort(data):
             background = 'lightwhite'
         else:
             background = 'black'
+    
     return foreground, background
 
 def make_colors(string, foreground = 'white', background=None, attrs=[]):
     # print "foreground 0 =", foreground
     if "-" in foreground or "_" in foreground:
         foreground, background = getSort(foreground)
+    elif foreground and len(foreground) < 3:
+        if background and not len(background) < 3:
+            foreground, background_temp = getSort(foreground=foreground, background=background)
+        else:
+            foreground, background = getSort(foreground=foreground, background=background)
+    
+    #print("foreground 0 =", foreground)
+    #print("background 0 =", background)
     win10color = Win10Colors()
     if os.getenv('MAKE_COLORS') == '0':
         return string
