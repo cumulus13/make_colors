@@ -1,10 +1,18 @@
 import os
+import sys
 import re
 class Win10Colors(object):
     """docstring for Win10Colors"""
     def __init__(self):
         super(Win10Colors, self).__init__()
 
+    def supports_color(self):
+        plat = sys.platform
+        supported_platform = plat != 'Pocket PC' and (plat != 'win32' or 'ANSICON' in os.environ)
+        # isatty is not always implemented, #6223.  
+        is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
+        return supported_platform and is_a_tty
+    
     def colored(self, string, foreground, background, attrs=[]):
         '''win10color
 
@@ -30,7 +38,8 @@ class Win10Colors(object):
         #             underline = '4m'
         #         elif i == 'inverse':
         #             inverse = '7m'
-
+        #print("foreground =", foreground)
+        #print("background =", background)
         fore_color_bank = {
             'black': '30m',
                 'red': '31m',
@@ -197,9 +206,12 @@ def make_colors(string, foreground = 'white', background=None, attrs=[]):
     #print("foreground 0 =", foreground)
     #print("background 0 =", background)
     win10color = Win10Colors()
-    if os.getenv('MAKE_COLORS') == '0':
+    #print("win10color.supports_color() =", win10color.supports_color())
+    if not win10color.supports_color() or os.getenv('MAKE_COLORS') == '0':
         return string
     elif os.getenv('MAKE_COLORS') == '1':
         return win10color.colored(string, foreground, background, attrs)
     else:
+        #print("foreground =", foreground)
+        #print("background =", background)
         return win10color.colored(string, foreground, background, attrs)

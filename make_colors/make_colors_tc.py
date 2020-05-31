@@ -174,7 +174,7 @@ def set_colorama(string, foreground, background):
         colorama.reinit()
         return foreground1 + background1 + string 
     except ImportError:
-        print 'NO MODULE NAME: "colorama"'
+        print ('NO MODULE NAME: "colorama"')
         return string
     colorama.init()
 
@@ -185,7 +185,7 @@ def set_termcolor(string, foreground, background, attrs):
             import colorama
             colorama.init(True, wrap= True)
         except ImportError:
-            print "NO colorama module !"
+            print ("NO colorama module !")
         
         #termcolor.RESET = True
         
@@ -240,7 +240,7 @@ def set_termcolor(string, foreground, background, attrs):
         if not foreground:
             return string
     except ImportError:
-        print 'NO MODULE NAME: "termcolor'
+        print ('NO MODULE NAME: "termcolor')
         return string
     termcolor.RESET
 
@@ -312,8 +312,8 @@ def make_colors(string, foreground = '', background = '', attrs = '', color_type
 
 if __name__ == '__main__':
     # print make_colors("TEST STRING", 'white', 'red')
-    print "WIN10COLOR = ", make_colors("TEST STRING", 'white', 'red', color_type='win10color')
-    print "TERMCOLOR  =", make_colors("TEST STRING", 'white', 'red', color_type='termcolor')
-    print "COLORAMA   =", make_colors("TEST STRING", 'white', 'red', color_type='colorama')
-    print "NETRAL     =", make_colors("TEST STRING", 'white', 'red', color_type='netral')
+    print ("WIN10COLOR = ", make_colors("TEST STRING", 'white', 'red', color_type='win10color'))
+    print ("TERMCOLOR  =", make_colors("TEST STRING", 'white', 'red', color_type='termcolor'))
+    print ("COLORAMA   =", make_colors("TEST STRING", 'white', 'red', color_type='colorama'))
+    print ("NETRAL     =", make_colors("TEST STRING", 'white', 'red', color_type='netral'))
     
