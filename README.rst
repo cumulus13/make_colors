@@ -1,4 +1,4 @@
-\$ make_colors\_
+make_colors
 ==================
 
 This is make command line text colored
@@ -30,6 +30,7 @@ What does it look like? Here is an example of a simple make_colors program:
     print make_colors('This is White on Red', 'white', 'red')
     print make_colors('This is Light White on Light Red', 'lightwhite', 'lightred')
     print make_colors('This is Light White on Light Magenta', 'lw', 'm')
+    print make_colors('This is Light White on Light Blue', 'lw', 'bl')
 
 
 And what it looks like when run:
@@ -40,6 +41,7 @@ And what it looks like when run:
     This is White on Red
     This is Light White on Light Red
     This is Light White on Light Magenta
+    This is Light White on Light Blue
 
 
 Support
