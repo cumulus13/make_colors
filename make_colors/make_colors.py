@@ -6,7 +6,8 @@ class Win10Colors(object):
     def __init__(self):
         super(Win10Colors, self).__init__()
 
-    def supports_color(self):
+    @classmethod
+    def supports_color(cls):
         plat = sys.platform
         supported_platform = plat != 'Pocket PC' and (plat != 'win32' or 'ANSICON' in os.environ)
         # isatty is not always implemented, #6223.  
@@ -194,6 +195,8 @@ def getSort(data=None, foreground='', background=''):
     return foreground, background
 
 def make_colors(string, foreground = 'white', background=None, attrs=[]):
+    if not Win10Colors.supports_color() or os.getenv('MAKE_COLORS') == '0':
+        return string
     # print "foreground 0 =", foreground
     if "-" in foreground or "_" in foreground:
         foreground, background = getSort(foreground)

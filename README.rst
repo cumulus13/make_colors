@@ -5,7 +5,7 @@ This is make command line text colored
 
 
 Installing
-----------
+-----------
 
 Install and update using `pip`_:
 
@@ -19,7 +19,7 @@ make_colors supports Python 2 and newer, Python 3 and newer, and PyPy.
 
 
 A Simple Example
-----------------
+-----------------
 
 What does it look like? Here is an example of a simple make_colors program:
 
@@ -45,13 +45,13 @@ And what it looks like when run:
 
 
 Support
-------
+--------
 
 *   Python 2.7 +, Python 3.x
 *   Windows, Linux
 
 Links
------
+------
 
 *   License: `BSD <https://github.com/licface/make_colors/blob/master/LICENSE.rst>`_
 *   Code: https://github.com/licface/make_colors
