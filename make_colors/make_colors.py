@@ -1,15 +1,21 @@
+from __future__ import print_function
+
 import os
 import sys
 import re
+
+MODE = 0
 
 if sys.platform == 'win32':
     import ctypes
     kernel32 = ctypes.WinDLL('kernel32')
     hStdOut = kernel32.GetStdHandle(-11)
     mode = ctypes.c_ulong()
-    kernel32.GetConsoleMode(hStdOut, ctypes.byref(mode))
-    mode.value |= 4
-    kernel32.SetConsoleMode(hStdOut, mode)
+    MODE = mode
+    if not mode.value == 7:
+        kernel32.GetConsoleMode(hStdOut, ctypes.byref(mode))
+        mode.value |= 4
+        kernel32.SetConsoleMode(hStdOut, mode)
 
 class Win10Colors(object):
     """docstring for Win10Colors"""
@@ -20,8 +26,13 @@ class Win10Colors(object):
     def supports_color(cls):
         plat = sys.platform
         supported_platform = plat != 'Pocket PC' and (plat != 'win32' or 'ANSICON' in os.environ)
+
         # isatty is not always implemented, #6223.  
         is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
+        
+        global MODE
+        if sys.platform == 'win32' and not MODE.value == 7:
+            supported_platform = False
         return supported_platform and is_a_tty
     
     def colored(self, string, foreground, background, attrs=[]):
@@ -49,7 +60,8 @@ class Win10Colors(object):
         #             underline = '4m'
         #         elif i == 'inverse':
         #             inverse = '7m'
-        
+        #print("foreground =", foreground)
+        #print("background =", background)
         fore_color_bank = {
             'black': '30m',
                 'red': '31m',
@@ -217,11 +229,13 @@ def make_colors(string, foreground = 'white', background=None, attrs=[]):
     
     win10color = Win10Colors()
     
-    # if not win10color.supports_color() or os.getenv('MAKE_COLORS') == '0':
-    #     return string
-    if os.getenv('MAKE_COLORS') == '0':
+    if not win10color.supports_color() or os.getenv('MAKE_COLORS') == '0':
         return string
     elif os.getenv('MAKE_COLORS') == '1':
         return win10color.colored(string, foreground, background, attrs)
     else:
         return win10color.colored(string, foreground, background, attrs)
+
+if __name__ == '__main__':
+    print(Win10Colors.supports_color())
+    print(make_colors("This is Red", 'lw', 'lr'))
