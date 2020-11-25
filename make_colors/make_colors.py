@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+
 if sys.platform == 'win32':
     import ctypes
     kernel32 = ctypes.WinDLL('kernel32')
@@ -9,7 +10,7 @@ if sys.platform == 'win32':
     kernel32.GetConsoleMode(hStdOut, ctypes.byref(mode))
     mode.value |= 4
     kernel32.SetConsoleMode(hStdOut, mode)
-    
+
 class Win10Colors(object):
     """docstring for Win10Colors"""
     def __init__(self):
@@ -48,8 +49,7 @@ class Win10Colors(object):
         #             underline = '4m'
         #         elif i == 'inverse':
         #             inverse = '7m'
-        #print("foreground =", foreground)
-        #print("background =", background)
+        
         fore_color_bank = {
             'black': '30m',
                 'red': '31m',
@@ -121,6 +121,7 @@ class Win10Colors(object):
             foreground = '37m'
 
         return "[%s;%s%s[0m" % (background[:-1], foreground, string)
+        # return "\033[%s;%s%s\033[0m" % (background[:-1], foreground, string)
 
 def getSort(data=None, foreground='', background=''):
     if data:
@@ -204,9 +205,8 @@ def getSort(data=None, foreground='', background=''):
     return foreground, background
 
 def make_colors(string, foreground = 'white', background=None, attrs=[]):
-    if not Win10Colors.supports_color() or os.getenv('MAKE_COLORS') == '0':
-        return string
-    # print "foreground 0 =", foreground
+    # if not Win10Colors.supports_color() or os.getenv('MAKE_COLORS') == '0':
+    #     return string
     if "-" in foreground or "_" in foreground:
         foreground, background = getSort(foreground)
     elif foreground and len(foreground) < 3:
@@ -215,15 +215,13 @@ def make_colors(string, foreground = 'white', background=None, attrs=[]):
         else:
             foreground, background = getSort(foreground=foreground, background=background)
     
-    #print("foreground 0 =", foreground)
-    #print("background 0 =", background)
     win10color = Win10Colors()
-    #print("win10color.supports_color() =", win10color.supports_color())
-    if not win10color.supports_color() or os.getenv('MAKE_COLORS') == '0':
+    
+    # if not win10color.supports_color() or os.getenv('MAKE_COLORS') == '0':
+    #     return string
+    if os.getenv('MAKE_COLORS') == '0':
         return string
     elif os.getenv('MAKE_COLORS') == '1':
         return win10color.colored(string, foreground, background, attrs)
     else:
-        #print("foreground =", foreground)
-        #print("background =", background)
         return win10color.colored(string, foreground, background, attrs)
