@@ -31,8 +31,8 @@ class Win10Colors(object):
         is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
         
         global MODE
-        if sys.platform == 'win32' and not MODE.value == 7:
-            supported_platform = False
+        if plat == 'win32' and int(MODE.value) == 7:
+            supported_platform = True
         return supported_platform and is_a_tty
     
     def colored(self, string, foreground, background, attrs=[]):
