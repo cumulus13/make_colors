@@ -229,7 +229,7 @@ def make_colors(string, foreground = 'white', background=None, attrs=[], force =
     
     win10color = Win10Colors()
     
-    if force:
+    if force or os.getenv('MAKE_COLORS_FORCE') == '1' or os.getenv('MAKE_COLORS_FORCE') == 'True':
         return win10color.colored(string, foreground, background, attrs)
     else:
         if not win10color.supports_color() or os.getenv('MAKE_COLORS') == '0':
