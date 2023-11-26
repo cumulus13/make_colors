@@ -216,7 +216,7 @@ def getSort(data=None, foreground='', background=''):
     
     return foreground, background
 
-def make_colors(string, foreground = 'white', background=None, attrs=[]):
+def make_colors(string, foreground = 'white', background=None, attrs=[], force = False):
     # if not Win10Colors.supports_color() or os.getenv('MAKE_COLORS') == '0':
     #     return string
     if "-" in foreground or "_" in foreground:
@@ -229,12 +229,15 @@ def make_colors(string, foreground = 'white', background=None, attrs=[]):
     
     win10color = Win10Colors()
     
-    if not win10color.supports_color() or os.getenv('MAKE_COLORS') == '0':
-        return string
-    elif os.getenv('MAKE_COLORS') == '1':
+    if force or os.getenv('MAKE_COLORS_FORCE') == '1' or os.getenv('MAKE_COLORS_FORCE') == 'True':
         return win10color.colored(string, foreground, background, attrs)
     else:
-        return win10color.colored(string, foreground, background, attrs)
+        if not win10color.supports_color() or os.getenv('MAKE_COLORS') == '0':
+            return string
+        elif os.getenv('MAKE_COLORS') == '1':
+            return win10color.colored(string, foreground, background, attrs)
+        else:
+            return win10color.colored(string, foreground, background, attrs)
 
 if __name__ == '__main__':
     print(Win10Colors.supports_color())

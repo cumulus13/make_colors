@@ -10,3 +10,4 @@
 traceback.log
 __pycache__/
 *__pycache__/
+*.orig
