@@ -1,7 +1,7 @@
 make_colors
 ==================
 
-This is make command line text colored
+print any with color
 
 
 Installing
@@ -56,3 +56,8 @@ Links
 *   License: `BSD <https://github.com/licface/make_colors/blob/master/LICENSE.rst>`_
 *   Code: https://github.com/licface/make_colors
 *   Issue tracker: https://github.com/licface/make_color/issues
+
+[![Buy Me a Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/cumulus13)
+
+[![Donate via Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/cumulus13)
+ [Support me on Patreon](https://www.patreon.com/cumulus13)
