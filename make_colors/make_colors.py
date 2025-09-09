@@ -239,50 +239,50 @@ def getSort(data=None, foreground='', background=''):
         ValueError: If an invalid color code is provided.
     """
     if data:
-        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
             _print("getSort: data =", data)
         if "-" in data or "_" in data:
             foreground, background = re.split("-|_", data)
-            if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+            if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
                 _print("getSort: foreground [1] =", foreground)
                 _print("getSort: background [1] =", background)
         else:
             foreground = data
             background = background
-            if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+            if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
                 _print("getSort: foreground [2] =", foreground)
                 _print("getSort: background [2] =", background)
-    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
         _print(f"getSort: foreground: {foreground}")
         _print(f"getSort: background: {background}")
     if foreground and len(foreground) > 2 and ("-" in foreground or "_" in foreground):
         _foreground, _background = re.split("-|_", foreground)
         foreground = _foreground or foreground
         background = _background or background
-        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
             _print("getSort: foreground [3] =", foreground)
             _print("getSort: background [3] =", background)
     elif background and len(background) > 2 and ("-" in background or "_" in background):
         _foreground, _background = re.split("-|_", background)
         foreground = _foreground or foreground
         background = _background or background
-        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
             _print("getSort: foreground [4] =", foreground)
             _print("getSort: background [4] =", background)
     else:
-        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
             _print("getSort: foreground [5] =", foreground)
             _print("getSort: background [5] =", background)
             
         foreground = foreground or 'white'
         background = background or None
-        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
             _print("getSort: foreground [6] =", foreground)
             _print("getSort: background [6] =", background)
         if foreground and len(foreground) > 2 and background and len(background) > 2:
             return foreground, background
           
-    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
         _print(f"getSort: foreground before: {foreground}")
         _print(f"getSort: background before: {background}")
         
@@ -291,7 +291,7 @@ def getSort(data=None, foreground='', background=''):
     if background and len(background) < 3:
         background = color_map(background)
     
-    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
         _print(f"getSort: returning foreground: {foreground}")
         _print(f"getSort: returning background: {background}")
     return foreground, background
@@ -315,7 +315,7 @@ def make_colors(string, foreground = 'white', background=None, attrs=[], force =
     # if not MakeColors.supports_color() or os.getenv('MAKE_COLORS') == '0':
     #     return string
 
-    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
+    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
         _print(f"FOREGROUND: {foreground}")
         _print(f"BACKGROUND: {background}")
         
