@@ -19,6 +19,9 @@ A simple, powerful and cross-platform Python library for adding colors to your t
 - [Contributing](#-contributing)
 - [License](#-license)
 
+[![Example Usage](https://github.com/cumulus13/make_colors/raw/refs/heads/master/example_usage.gif)](https://github.com/cumulus13/make_colors/raw/refs/heads/master/example_usage.gif)
+
+
 ## ✨ Features
 
 - 🖥️ **Cross-platform support** - Works on Windows, Linux, and macOS
