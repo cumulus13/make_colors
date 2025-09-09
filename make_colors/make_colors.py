@@ -255,14 +255,14 @@ def getSort(data=None, foreground='', background=''):
     if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
         _print(f"getSort: foreground: {foreground}")
         _print(f"getSort: background: {background}")
-    if len(foreground) > 2 and ("-" in foreground or "_" in foreground):
+    if foreground and len(foreground) > 2 and ("-" in foreground or "_" in foreground):
         _foreground, _background = re.split("-|_", foreground)
         foreground = _foreground or foreground
         background = _background or background
         if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True'] or os.getenv('DEBUG') in ['1', 'true', 'True']:
             _print("getSort: foreground [3] =", foreground)
             _print("getSort: background [3] =", background)
-    elif len(background) > 2 and ("-" in background or "_" in background):
+    elif background and len(background) > 2 and ("-" in background or "_" in background):
         _foreground, _background = re.split("-|_", background)
         foreground = _foreground or foreground
         background = _background or background
