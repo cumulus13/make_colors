@@ -255,7 +255,7 @@ make_colors("Hello", "white_red")
 make_colors("Hello", "red", force=True)
 ```
 
-### `Win10Colors.supports_color()`
+### `MakeColors.supports_color()`
 
 Class method to check if the current terminal supports color output.
 
@@ -263,9 +263,9 @@ Class method to check if the current terminal supports color output.
 - `bool`: True if colors are supported, False otherwise
 
 ```python
-from make_colors import Win10Colors
+from make_colors import MakeColors
 
-if Win10Colors.supports_color():
+if MakeColors.supports_color():
     print("Colors are supported!")
 else:
     print("Colors not supported on this terminal")
@@ -315,13 +315,13 @@ test_all_colors()
 ```python
 def check_color_support():
     """Check and display color support information"""
-    from make_colors import Win10Colors
+    from make_colors import MakeColors
     import sys
     import os
     
     print("=== Color Support Information ===")
     print(f"Platform: {sys.platform}")
-    print(f"Colors supported: {Win10Colors.supports_color()}")
+    print(f"Colors supported: {MakeColors.supports_color()}")
     print(f"MAKE_COLORS env: {os.getenv('MAKE_COLORS', 'not set')}")
     print(f"MAKE_COLORS_FORCE env: {os.getenv('MAKE_COLORS_FORCE', 'not set')}")
     
@@ -340,11 +340,11 @@ check_color_support()
 5. **Test on multiple platforms** to ensure compatibility
 
 ```python
-from make_colors import make_colors, Win10Colors
+from make_colors import make_colors, MakeColors
 
 def safe_print(text, fg="white", bg=None):
     """Safely print colored text with fallback"""
-    if Win10Colors.supports_color():
+    if MakeColors.supports_color():
         print(make_colors(text, fg, bg))
     else:
         print(f"[{fg.upper()}] {text}")
