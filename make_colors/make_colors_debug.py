@@ -30,8 +30,6 @@ import re
 MODE = 0
 _print = print
 
-__all__ = ['MakeColors', 'MakeColor', 'color_map', 'getSort', 'parse_rich_markup', 'make_colors', 'make_color']
-
 # Windows-specific console setup for ANSI color support
 if sys.platform == 'win32':
     import ctypes
@@ -261,41 +259,19 @@ class MakeColors(object):
         if not foreground_code:
             foreground_code = '37m'  # Default to white foreground
 
-        # # Process attributes
-        # attr_sequence = ""
-        # if attrs:
-        #     valid_attrs = []
-        #     for attr in attrs:
-        #         if attr.lower() in attr_codes:
-        #             valid_attrs.append(attr_codes[attr.lower()])
-        #     if valid_attrs:
-        #         attr_sequence = ";".join(valid_attrs) + ";"
-
-        # # Return formatted ANSI escape sequence with attributes
-        # return "[%s%s;%s%s[0m" % (attr_sequence, background_code[:-1], foreground_code, string)
-        # # return "[%s;%s%s[0m" % (background[:-1], foreground, string)
-
-        # Arrange ANSI codes
-        codes = []
-
-        # add attrs
+        # Process attributes
+        attr_sequence = ""
         if attrs:
+            valid_attrs = []
             for attr in attrs:
                 if attr.lower() in attr_codes:
-                    codes.append(attr_codes[attr.lower()])
+                    valid_attrs.append(attr_codes[attr.lower()])
+            if valid_attrs:
+                attr_sequence = ";".join(valid_attrs) + ";"
 
-        # add background
-        if background_code:
-            codes.append(background_code[:-1])  # hapus 'm'
-
-        # add foreground
-        if foreground_code:
-            codes.append(foreground_code[:-1])
-
-        # join all with ';'
-        ansi_sequence = ";".join(codes)
-        return f"[{ansi_sequence}m{string}[0m"
-
+        # Return formatted ANSI escape sequence with attributes
+        return "[%s%s;%s%s[0m" % (attr_sequence, background_code[:-1], foreground_code, string)
+        # return "[%s;%s%s[0m" % (background[:-1], foreground, string)
 
     def rich_colored(self, string, color=None, bg_color=None, style=None):
         """Generate rich formatted text with enhanced styling options.
@@ -588,41 +564,144 @@ def getSort(data=None, foreground='', background=''):
     return foreground, background
 
 def parse_rich_markup(text):
-    pattern = r'\[([^\]]+)\](.*?)\[/\]'
-    results = []
-    last_end = 0
+    """Parse Rich console markup format and extract styling information.
+    
+    This function parses Rich-style markup tags like "[white on red]text[/]" and
+    handles multiple markup sections in a single string, converting each to ANSI escape codes or 
+    extracts the color and style information for ANSI conversion.
+    
+    Args:
+        text (str): Text with Rich markup format.
+                   Examples: "[white on red]TEST[/]", "[bold red]Error[/]", "[blue]Info[/]"
+    
+    Returns:
+        tuple: (cleaned_text, foreground, background, style)
+               - cleaned_text: Text with markup tags removed
+               - foreground: Foreground color name or None
+               - background: Background color name or None  
+               - style: Style attribute or None
+    
+    Example:
+        >>> parse_rich_markup("[white on red]TEST[/]")
+        ('TEST', 'white', 'red', None)
+        >>> parse_rich_markup("[bold blue]Message[/]")  
+        ('Message', 'blue', None, 'bold')
+        >>> parse_rich_markup("[italic green on yellow]Warning[/]")
+        ('Warning', 'green', 'yellow', 'italic')
+    """
+    
+    # Pattern to match Rich markup: [style] content [/]
+    pattern = r'\[([^\]]+)\]([^[]*?)\[/?[^\]]*?\]'
+    #pattern = r'\[([^\]]+)\]([^[]*?)\[/?[^\]]*\]'
+    match = re.search(pattern, text)
+    
+    if not match:
+        # No markup found, return as-is
+        return text, None, None, None
+    
+    markup = match.group(1).strip()
+    content = match.group(2)
+    
+    # Parse the markup content
+    foreground = None
+    background = None
+    style = None
+    
+    # Handle different markup formats
+    parts = markup.lower().split()
+    
+    # Check for styles first
+    styles = ['bold', 'italic', 'underline', 'dim', 'blink', 'reverse', 'strikethrough']
+    for part in parts[:]:
+        if part in styles:
+            style = part
+            parts.remove(part)
+            break
+    
+    # Parse remaining parts for colors
+    remaining = ' '.join(parts)
+    
+    if ' on ' in remaining:
+        # Format: "color1 on color2"
+        color_parts = remaining.split(' on ')
+        if len(color_parts) == 2:
+            foreground = color_parts[0].strip()
+            background = color_parts[1].strip()
+    else:
+        # Single color specification
+        if remaining:
+            foreground = remaining.strip()
+    
+    return content, foreground, background, style
 
-    for m in re.finditer(pattern, text):
-        # plain text before markup
-        if m.start() > last_end:
-            results.append((text[last_end:m.start()], None, None, None))
-
-        markup = m.group(1).strip().lower()
-        content = m.group(2)
-
-        fg, bg, style = None, None, None
-        parts = markup.split()
+def parse_rich_markup1(text):
+    """Parse Rich console markup format and extract styling information.
+    
+    This function parses Rich-style markup tags and handles multiple markup sections
+    in a single string, converting each to ANSI escape codes.
+    
+    Args:
+        text (str): Text with Rich markup format.
+    
+    Returns:
+        str: Text converted to ANSI escape codes.
+    """
+    
+    # Pattern to match Rich markup: [style] content [/]
+    pattern = r'\[([^\]]+)\]([^[]*?)\[/?[^\]]*?\]'
+    
+    def process_markup(match):
+        markup = match.group(1).strip()
+        content = match.group(2)
+        
+        # Parse the markup content
+        foreground = None
+        background = None
+        style = None
+        
+        # Handle different markup formats
+        parts = markup.lower().split()
+        
+        # Check for styles first
         styles = ['bold', 'italic', 'underline', 'dim', 'blink', 'reverse', 'strikethrough']
         for part in parts[:]:
             if part in styles:
                 style = part
                 parts.remove(part)
                 break
-
+        
+        # Parse remaining parts for colors
         remaining = ' '.join(parts)
+        
         if ' on ' in remaining:
-            fg, bg = [p.strip() for p in remaining.split(' on ', 1)]
-        elif remaining:
-            fg = remaining.strip()
-
-        results.append((content, fg, bg, style))
-        last_end = m.end()
-
-    # plain text after the last markup
-    if last_end < len(text):
-        results.append((text[last_end:], None, None, None))
-
-    return results
+            # Format: "color1 on color2"
+            color_parts = remaining.split(' on ')
+            if len(color_parts) == 2:
+                foreground = color_parts[0].strip()
+                background = color_parts[1].strip()
+        else:
+            # Single color specification
+            if remaining:
+                foreground = remaining.strip()
+        
+        # Create MakeColors instance and apply formatting
+        mc = MakeColors()
+        attrs = [style] if style else []
+        
+        # Convert rich format to standard format
+        if background and not background.startswith('on_'):
+            background = f'on_{background}'
+        
+        return mc.colored(content, foreground or 'white', background, attrs)
+    
+    # Process all markup sections in the text
+    result = re.sub(pattern, process_markup, text)
+    
+    # If no markup was processed, return original text
+    if result == text and '[' in text and ']' in text:
+        return text
+    
+    return result
 
 def make_colors(string, foreground='white', background=None, attrs=[], force=False):
     """Apply color formatting to text with comprehensive control options and Rich markup support.
@@ -722,24 +801,82 @@ def make_colors(string, foreground='white', background=None, attrs=[], force=Fal
     """
     # Check for Rich markup format first
     if '[' in string and ']' in string and '[/' in string:
-        results = parse_rich_markup(string)
-        if results:
-            output = ""
-            _coloring = MakeColors()
-            for content, rich_fg, rich_bg, rich_style in results:
-                if not content:
-                    continue
-                fg = rich_fg or foreground
-                bg = rich_bg or background
-                if bg and not str(bg).startswith('on_'):
-                    bg = f'on_{bg}'
-                if rich_style:
-                    part = _coloring.rich_colored(content, fg, bg, rich_style)
+        # Parse Rich markup format
+        parsed_content, rich_fg, rich_bg, rich_style = parse_rich_markup(string)
+        if parsed_content != string:  # Markup was found and parsed
+            # Use Rich markup colors, override parameters
+            string = parsed_content
+            if rich_fg:
+                foreground = rich_fg
+            if rich_bg:
+                if not rich_bg.startswith('on_'):
+                    background = f'on_{rich_bg}'
                 else:
-                    part = _coloring.colored(content, fg, bg, attrs)
-                output += part
-            return output
+                    background = rich_bg
+            if rich_style:
+                # Handle style - for now, we'll use the rich_colored method
+                _coloring = MakeColors()
+                
+                # Handle forced coloring or environment checks
+                if force or os.getenv('MAKE_COLORS_FORCE') == '1' or os.getenv('MAKE_COLORS_FORCE') == 'True':
+                    return _coloring.rich_colored(string, foreground, rich_bg, rich_style)
+                else:
+                    if not _coloring.supports_color() or os.getenv('MAKE_COLORS') == '0':
+                        return string
+                    else:
+                        return _coloring.rich_colored(string, foreground, rich_bg, rich_style)
+    
+    # Debug output for color specifications
+    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
+        _print(f"FOREGROUND: {foreground}")
+        _print(f"BACKGROUND: {background}")
+        _print(f"ATTRS: {attrs}")
+    
+    # Parse combined color format (e.g., "red-yellow", "r_b")    
+    if "-" in foreground or "_" in foreground:
+        foreground, background = getSort(foreground)
+    elif (foreground and len(foreground) < 3) or (background and len(background) < 3):
+        # Expand abbreviations
+        foreground, background = getSort(foreground=foreground, background=background)
+    
+    # Initialize the color processor
+    _coloring = MakeColors()
+    
+    # Handle forced coloring mode
+    if force or os.getenv('MAKE_COLORS_FORCE') == '1' or os.getenv('MAKE_COLORS_FORCE') == 'True':
+        return _coloring.colored(string, foreground, background, attrs)
+    else:
+        # Check environment settings and terminal support
+        if not _coloring.supports_color() or os.getenv('MAKE_COLORS') == '0':
+            # Return plain text when colors are disabled or unsupported
+            return string
+        elif os.getenv('MAKE_COLORS') == '1':
+            # Explicitly enabled
+            return _coloring.colored(string, foreground, background, attrs)
+        else:
+            # Default behavior - apply coloring
+            return _coloring.colored(string, foreground, background, attrs)
 
+def make_colors1(string, foreground='white', background=None, attrs=[], force=False):
+    """Apply color formatting to text with comprehensive control options and Rich markup support."""
+    
+    # Check for Rich markup format first
+    if '[' in string and ']' in string and '[/' in string:
+        # Parse Rich markup format - this now handles multiple markup sections
+        result = parse_rich_markup(string)
+        if result != string:  # Markup was found and parsed
+            # Check if coloring should be applied
+            _coloring = MakeColors()
+            if force or os.getenv('MAKE_COLORS_FORCE') == '1' or os.getenv('MAKE_COLORS_FORCE') == 'True':
+                return result
+            else:
+                if not _coloring.supports_color() or os.getenv('MAKE_COLORS') == '0':
+                    # Strip ANSI codes and return plain text
+                    import re
+                    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+                    return ansi_escape.sub('', result)
+                else:
+                    return result
     
     # Debug output for color specifications
     if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
@@ -1163,230 +1300,3 @@ if __name__ == '__main__':
     _print("Module test completed successfully!")
     _print("Rich markup format is now fully supported and compatible with Rich console!")
     _print("For more information, see the comprehensive docstrings in each function.")
-
-
-# def parse_rich_markup1(text):
-#     """Parse Rich console markup format and extract styling information.
-    
-#     This function parses Rich-style markup tags like "[white on red]text[/]" and
-#     handles multiple markup sections in a single string, converting each to ANSI escape codes or 
-#     extracts the color and style information for ANSI conversion.
-    
-#     Args:
-#         text (str): Text with Rich markup format.
-#                    Examples: "[white on red]TEST[/]", "[bold red]Error[/]", "[blue]Info[/]"
-    
-#     Returns:
-#         tuple: (cleaned_text, foreground, background, style)
-#                - cleaned_text: Text with markup tags removed
-#                - foreground: Foreground color name or None
-#                - background: Background color name or None  
-#                - style: Style attribute or None
-    
-#     Example:
-#         >>> parse_rich_markup("[white on red]TEST[/]")
-#         ('TEST', 'white', 'red', None)
-#         >>> parse_rich_markup("[bold blue]Message[/]")  
-#         ('Message', 'blue', None, 'bold')
-#         >>> parse_rich_markup("[italic green on yellow]Warning[/]")
-#         ('Warning', 'green', 'yellow', 'italic')
-#     """
-    
-#     # Pattern to match Rich markup: [style] content [/]
-#     pattern = r'\[([^\]]+)\]([^[]*?)\[/?[^\]]*?\]'
-#     #pattern = r'\[([^\]]+)\]([^[]*?)\[/?[^\]]*\]'
-#     match = re.search(pattern, text)
-    
-#     if not match:
-#         # No markup found, return as-is
-#         return text, None, None, None
-    
-#     markup = match.group(1).strip()
-#     content = match.group(2)
-    
-#     # Parse the markup content
-#     foreground = None
-#     background = None
-#     style = None
-    
-#     # Handle different markup formats
-#     parts = markup.lower().split()
-    
-#     # Check for styles first
-#     styles = ['bold', 'italic', 'underline', 'dim', 'blink', 'reverse', 'strikethrough']
-#     for part in parts[:]:
-#         if part in styles:
-#             style = part
-#             parts.remove(part)
-#             break
-    
-#     # Parse remaining parts for colors
-#     remaining = ' '.join(parts)
-    
-#     if ' on ' in remaining:
-#         # Format: "color1 on color2"
-#         color_parts = remaining.split(' on ')
-#         if len(color_parts) == 2:
-#             foreground = color_parts[0].strip()
-#             background = color_parts[1].strip()
-#     else:
-#         # Single color specification
-#         if remaining:
-#             foreground = remaining.strip()
-    
-#     return content, foreground, background, style
-
-# def make_colors1(string, foreground='white', background=None, attrs=[], force=False):
-#     """Apply color formatting to text with comprehensive control options and Rich markup support.
-
-#     This is the main function for creating colored text output. It provides
-#     flexible color specification, environment variable controls, Rich console
-#     markup parsing, and cross-platform compatibility. The function automatically 
-#     handles color support detection and can be forced to output colors regardless 
-#     of environment.
-
-#     Args:
-#         string (str): The text string to be colorized. Can include Rich markup format.
-#                      Examples: 
-#                      - Plain text: "Error message", "Success!", "Warning: Check input"
-#                      - Rich markup: "[red]Error[/]", "[white on blue]Info[/]", "[bold green]Success[/]"
-#         foreground (str): Foreground color specification. Can be:
-#                          - Full color name: "red", "green", "lightblue"
-#                          - Abbreviation: "r", "g", "lb" 
-#                          - Combined format: "red-yellow", "r_b"
-#                          Defaults to 'white'. Ignored if Rich markup is used.
-#         background (str, optional): Background color specification. Can be:
-#                                    - Full color name: "yellow", "black"
-#                                    - With 'on_' prefix: "on_yellow", "on_black"
-#                                    - Abbreviation: "y", "b"
-#                                    Defaults to None (no background). Ignored if Rich markup is used.
-#         attrs (list): List of text attributes for future enhancement.
-#                      Currently reserved for extensions like ['bold', 'underline'].
-#                      Defaults to empty list.
-#         force (bool): Force color output even if environment doesn't support it.
-#                      Useful for file output or testing.
-#                      Defaults to False.
-
-#     Returns:
-#         str: The colorized string with ANSI escape codes, or the original string
-#              if coloring is disabled or unsupported.
-
-#     Rich Markup Support:
-#         The function now supports Rich console markup format:
-#         - "[color]text[/]" - Single color
-#         - "[color1 on color2]text[/]" - Foreground and background  
-#         - "[style color]text[/]" - Style with color
-#         - "[style color1 on color2]text[/]" - Style with colors
-        
-#         Supported styles: bold, italic, underline, dim, blink, reverse, strikethrough
-#         Supported colors: All standard ANSI colors and their light variants
-
-#     Environment Variables:
-#         MAKE_COLORS: 
-#             - "0": Disable all coloring (returns plain text)
-#             - "1": Enable coloring (default behavior)
-#         MAKE_COLORS_FORCE:
-#             - "1" or "True": Force coloring regardless of terminal support
-#         MAKE_COLORS_DEBUG:
-#             - "1", "true", "True": Enable debug output for troubleshooting
-
-#     Example:
-#         >>> # Basic usage
-#         >>> error_msg = make_colors("Error occurred!", "red")
-#         >>> print(error_msg)  # Red text
-        
-#         >>> # With background
-#         >>> warning = make_colors("Warning!", "yellow", "on_black") 
-#         >>> print(warning)  # Yellow text on black background
-        
-#         >>> # Using abbreviations
-#         >>> info = make_colors("Info", "lb", "w")  # Light blue on white
-#         >>> print(info)
-        
-#         >>> # Combined format
-#         >>> status = make_colors("Ready", "green-black")
-#         >>> print(status)  # Green text on black background
-        
-#         >>> # Rich markup format (NEW!)
-#         >>> rich_error = make_colors("[red]Error occurred![/]")
-#         >>> rich_warning = make_colors("[yellow on black]Warning![/]") 
-#         >>> rich_success = make_colors("[bold green]Success![/]")
-#         >>> rich_info = make_colors("[italic blue on white]Information[/]")
-#         >>> print(rich_error, rich_warning, rich_success, rich_info)
-        
-#         >>> # Mixed usage - these are equivalent:
-#         >>> text1 = make_colors("TEST", "white", "on_red")
-#         >>> text2 = make_colors("[white on red]TEST[/]")
-#         >>> # Both produce identical output
-        
-#         >>> # Force coloring for file output
-#         >>> with open("log.txt", "w") as f:
-#         ...     colored = make_colors("[blue]Log entry[/]", force=True)
-#         ...     f.write(colored)
-
-#     Note:
-#         - Rich markup takes precedence over foreground/background parameters
-#         - Automatically detects terminal color support
-#         - Falls back to plain text when colors are unsupported
-#         - Respects environment variable settings for global control
-#         - Cross-platform compatible (Windows 10+, Linux, macOS)
-#         - Fully compatible with Rich console format
-#     """
-#     # Check for Rich markup format first
-#     if '[' in string and ']' in string and '[/' in string:
-#         # Parse Rich markup format
-#         parsed_content, rich_fg, rich_bg, rich_style = parse_rich_markup(string)
-#         if parsed_content != string:  # Markup was found and parsed
-#             # Use Rich markup colors, override parameters
-#             string = parsed_content
-#             if rich_fg:
-#                 foreground = rich_fg
-#             if rich_bg:
-#                 if not rich_bg.startswith('on_'):
-#                     background = f'on_{rich_bg}'
-#                 else:
-#                     background = rich_bg
-#             if rich_style:
-#                 # Handle style - for now, we'll use the rich_colored method
-#                 _coloring = MakeColors()
-                
-#                 # Handle forced coloring or environment checks
-#                 if force or os.getenv('MAKE_COLORS_FORCE') == '1' or os.getenv('MAKE_COLORS_FORCE') == 'True':
-#                     return _coloring.rich_colored(string, foreground, rich_bg, rich_style)
-#                 else:
-#                     if not _coloring.supports_color() or os.getenv('MAKE_COLORS') == '0':
-#                         return string
-#                     else:
-#                         return _coloring.rich_colored(string, foreground, rich_bg, rich_style)
-    
-#     # Debug output for color specifications
-#     if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
-#         _print(f"FOREGROUND: {foreground}")
-#         _print(f"BACKGROUND: {background}")
-#         _print(f"ATTRS: {attrs}")
-    
-#     # Parse combined color format (e.g., "red-yellow", "r_b")    
-#     if "-" in foreground or "_" in foreground:
-#         foreground, background = getSort(foreground)
-#     elif (foreground and len(foreground) < 3) or (background and len(background) < 3):
-#         # Expand abbreviations
-#         foreground, background = getSort(foreground=foreground, background=background)
-    
-#     # Initialize the color processor
-#     _coloring = MakeColors()
-    
-#     # Handle forced coloring mode
-#     if force or os.getenv('MAKE_COLORS_FORCE') == '1' or os.getenv('MAKE_COLORS_FORCE') == 'True':
-#         return _coloring.colored(string, foreground, background, attrs)
-#     else:
-#         # Check environment settings and terminal support
-#         if not _coloring.supports_color() or os.getenv('MAKE_COLORS') == '0':
-#             # Return plain text when colors are disabled or unsupported
-#             return string
-#         elif os.getenv('MAKE_COLORS') == '1':
-#             # Explicitly enabled
-#             return _coloring.colored(string, foreground, background, attrs)
-#         else:
-#             # Default behavior - apply coloring
-#             return _coloring.colored(string, foreground, background, attrs)
-

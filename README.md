@@ -1,6 +1,6 @@
-# 🎨 make_colors
+# 🎨 make\_colors
 
-A simple, powerful and cross-platform Python library for adding colors to your terminal output with cross-platform support, especially optimized for Windows 10+ terminals.
+A simple, powerful, and cross-platform Python library for adding colors, styles, and rich markup support to your terminal output. Optimized for **Windows 10+**, Linux, and macOS.
 
 [![Python Version](https://img.shields.io/badge/python-2.7%2B%20%7C%203.x-blue.svg)](https://python.org)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](https://github.com)
@@ -8,37 +8,49 @@ A simple, powerful and cross-platform Python library for adding colors to your t
 
 ## 📋 Table of Contents
 
-- [Features](#-features)
-- [Installation](#-installation)
-- [Quick Start](#-quick-start)
-- [Color Reference](#-color-reference)
-- [Usage Examples](#-usage-examples)
-- [Environment Variables](#-environment-variables)
-- [API Reference](#-api-reference)
-- [Platform Support](#-platform-support)
-- [Contributing](#-contributing)
-- [License](#-license)
+* [✨ Features](#-features)
+* [📦 Installation](#-installation)
+* [🚀 Quick Start](#-quick-start)
+* [🎨 Color Reference](#-color-reference)
+* [💡 Usage Examples](#-usage-examples)
+* [🌍 Environment Variables](#-environment-variables)
+* [📚 API Reference](#-api-reference)
+* [🖋 Rich Markup Support](#-rich-markup-support)
+* [🖥️ Platform Support](#-platform-support)
+* [🛠️ Development & Testing](#-development--testing)
+* [🎯 Best Practices](#-best-practices)
+* [⚠️ Error Handling](#️-error-handling)
+* [📊 Performance](#-performance)
+* [📑 Quick Reference](#-quick-reference)
+* [🤝 Contributing](#-contributing)
+* [📄 License](#-license)
+* [👨‍💻 Author](#-author)
 
 [![Example Usage](https://github.com/cumulus13/make_colors/raw/refs/heads/master/example_usage.gif)](https://github.com/cumulus13/make_colors/raw/refs/heads/master/example_usage.gif)
 
+---
 
 ## ✨ Features
 
-- 🖥️ **Cross-platform support** - Works on Windows, Linux, and macOS
-- 🎯 **Windows 10+ optimized** - Special support for modern Windows terminals
-- 🌈 **Rich color palette** - 16 colors with light variants
-- 📝 **Simple syntax** - Easy-to-use color shortcuts and full names
-- 🔧 **Flexible formatting** - Support for foreground/background combinations
-- 🚀 **Lightweight** - Minimal dependencies, fast performance
-- 🎛️ **Environment control** - Enable/disable colors via environment variables
+* 🖥️ **Cross-platform support** – Works on Windows, Linux, and macOS
+* 🎯 **Windows 10+ optimized** – Uses native ANSI processing on Windows Console
+* 🌈 **Rich color palette** – 16 standard colors with light variants
+* 📝 **Simple syntax** – Full names, abbreviations, and combined formats
+* 🔧 **Flexible formatting** – Foreground, background, and text attributes
+* 🖋 **Rich markup** – Parse and render `[red]Error[/]` or `[bold white on red]CRITICAL[/]`
+* 🚀 **Lightweight** – Zero external dependencies
+* 🎛️ **Environment control** – Enable/disable colors globally with env vars
+* 🛡 **Error handling** – Graceful fallbacks when unsupported colors are used
+
+---
 
 ## 📦 Installation
-
-Install make_colors using pip:
 
 ```bash
 pip install make_colors
 ```
+
+---
 
 ## 🚀 Quick Start
 
@@ -55,23 +67,28 @@ print(make_colors("Important Message", "white", "red"))
 print(make_colors("Quick and easy", "r", "bl"))  # red text, blue background
 
 # Using underscore notation
-print(make_colors("One-liner style", "green_yellow"))  # green text, yellow background
+print(make_colors("One-liner style", "green_yellow"))  # green text on yellow background
+
+# Rich markup
+print(make_colors("[bold white on red] CRITICAL [/]") )
 ```
+
+---
 
 ## 🎨 Color Reference
 
 ### Available Colors
 
-| Color Name | Shortcut | Light Variant | Light Shortcut |
-|-----------|----------|---------------|----------------|
-| black     | b, bk    | lightblack    | lb             |
-| red       | r, rd, re| lightred      | lr             |
-| green     | g, gr, ge| lightgreen    | lg             |
-| yellow    | y, ye, yl| lightyellow   | ly             |
-| blue      | bl       | lightblue     | lb             |
-| magenta   | m, mg, ma| lightmagenta  | lm             |
-| cyan      | c, cy, cn| lightcyan     | lc             |
-| white     | w, wh, wi, wt | lightwhite | lw        |
+| Color Name | Shortcuts     | Light Variant | Light Shortcut |
+| ---------- | ------------- | ------------- | -------------- |
+| black      | b, bk         | lightblack    | lb             |
+| red        | r, rd, re     | lightred      | lr             |
+| green      | g, gr, ge     | lightgreen    | lg             |
+| yellow     | y, ye, yl     | lightyellow   | ly             |
+| blue       | bl            | lightblue     | lb             |
+| magenta    | m, mg, ma     | lightmagenta  | lm             |
+| cyan       | c, cy, cn     | lightcyan     | lc             |
+| white      | w, wh, wi, wt | lightwhite    | lw             |
 
 ### Color Preview
 
@@ -93,14 +110,13 @@ print(make_colors("■ Light Blue", "lightblue"))
 print(make_colors("■ Light Yellow", "lightyellow"))
 ```
 
+---
+
 ## 💡 Usage Examples
 
 ### Basic Usage
 
 ```python
-from make_colors import make_colors
-
-# Different ways to specify colors
 print(make_colors("Full color names", "red", "white"))
 print(make_colors("Using shortcuts", "r", "w"))
 print(make_colors("Mixed notation", "red", "w"))
@@ -153,10 +169,23 @@ print(log_message("INFO", "Server started successfully"))
 print(log_message("DEBUG", "Variable value: 42"))
 ```
 
-### Progress Indicators
+### Attributes
+
+```python
+print(make_colors("Bold text", "red", attrs=["bold"]))
+print(make_colors("Underlined", "blue", attrs=["underline"]))
+print(make_colors("Italic + Bold", "green", attrs=["italic", "bold"]))
+```
+
+### Progress Bar Indicators
 
 ```python
 import time
+for i in range(0, 101, 20):
+    bar = "█" * (i // 5) + "░" * (20 - i // 5)
+    print(f"\r{make_colors(f'[{bar}] {i}%', 'yellow')}", end="")
+    time.sleep(0.2)
+print()
 
 def progress_bar(current, total, width=50):
     percentage = current / total
@@ -203,14 +232,17 @@ def create_menu():
 choice = create_menu()
 ```
 
+---
+
 ## 🌍 Environment Variables
 
-Control make_colors behavior with environment variables:
+| Variable            | Values              | Description                        |
+| ------------------- | ------------------- | ---------------------------------- |
+| `MAKE_COLORS`       | `0` or `1`          | Disable/enable colors globally     |
+| `MAKE_COLORS_FORCE` | `0`, `1`, `True`    | Force colors even when unsupported |
+| `MAKE_COLORS_DEBUG` | `1`, `true`, `True` | Enable debug parsing logs          |
 
-| Variable | Values | Description |
-|----------|--------|-------------|
-| `MAKE_COLORS` | `0`, `1` | Disable/enable colors globally |
-| `MAKE_COLORS_FORCE` | `0`, `1`, `True` | Force colors even when not supported |
+Example:
 
 ```python
 import os
@@ -224,21 +256,44 @@ os.environ['MAKE_COLORS_FORCE'] = '1'
 print(make_colors("Forced colors", "green"))  # Always colored
 ```
 
+---
+
 ## 📚 API Reference
 
 ### `make_colors(string, foreground='white', background=None, attrs=[], force=False)`
 
-Colorizes a string with specified foreground and background colors.
+Main function to colorize strings with ANSI or Rich markup.
 
-**Parameters:**
-- `string` (str): Text to colorize
-- `foreground` (str): Foreground color name or shortcut
-- `background` (str, optional): Background color name or shortcut
-- `attrs` (list, optional): Text attributes (currently reserved for future use)
-- `force` (bool, optional): Force coloring even when not supported
+* `string` *(str)* – Input text, supports Rich markup like `[red]Error[/]`
+* `foreground` *(str)* – Foreground color
+* `background` *(str|None)* – Background color
+* `attrs` *(list)* – List of attributes: `bold`, `underline`, `italic`, etc.
+* `force` *(bool)* – Force enable colors
 
 **Returns:**
-- `str`: Colorized string with ANSI escape codes
+- `str` (Colorized string with ANSI string escape codes)
+
+---
+
+### `make_color(...)`
+
+Alias for `make_colors`.
+
+### `print(string, ...)`
+
+Convenience print wrapper that applies `make_colors` before printing.
+
+### `parse_rich_markup(text)`
+
+Parses strings like `[bold red on black]Hello[/]` into `(content, fg, bg, style)` tuples. Supports multiple tags.
+
+### `getSort(data, foreground, background)`
+
+Parses combined formats like `red-yellow`, `g_b`, expanding into `(fg, bg)`.
+
+### `color_map(code)`
+
+Maps abbreviations like `r`, `bl`, `lg` to full names.
 
 **Examples:**
 ```python
@@ -258,12 +313,11 @@ make_colors("Hello", "white_red")
 make_colors("Hello", "red", force=True)
 ```
 
-### `MakeColors.supports_color()`
+### `MakeColors` class
 
-Class method to check if the current terminal supports color output.
-
-**Returns:**
-- `bool`: True if colors are supported, False otherwise
+* `colored(string, fg, bg, attrs)` → low-level ANSI output
+* `rich_colored(string, color, bg, style)` → Rich style support
+* `supports_color()` → Detect terminal support, return: `bool`: True if colors are supported, False otherwise
 
 ```python
 from make_colors import MakeColors
@@ -274,24 +328,47 @@ else:
     print("Colors not supported on this terminal")
 ```
 
+### Exceptions
+
+* `MakeColorsError` – Raised when invalid colors are used
+* `MakeColorsWarning` – Non-critical fallback warnings
+
+---
+
+## 🖋 Rich Markup Support
+
+The library supports **Rich-style markup** similar to the `rich` package:
+
+```python
+print(make_colors("[red]Error[/] [bold white on blue]CRITICAL[/] [green]OK[/]"))
+```
+
+Supported styles:
+
+* **bold**, **italic**, **underline**, **dim**, **blink**, **reverse**, **strikethrough**
+
+---
+
 ## 🖥️ Platform Support
 
+
 ### Windows
-- **Windows 10+**: Full support with native ANSI escape sequences
-- **Older Windows**: Limited support, requires ANSICON or similar tools
-- **Windows Terminal**: Excellent support with all features
+* **Windows 10+**       ✅ (full ANSI support)
+* **Older Windows**     ⚠️ requires ANSICON
+* **Windows Terminal**: 👍 Excellent support with all features
 
 ### Linux/Unix
-- **Most terminals**: Full support (xterm, gnome-terminal, konsole, etc.)
-- **Tmux/Screen**: Supported
-- **SSH sessions**: Supported when terminal supports colors
+* **Most terminals**: ✅ Full support (xterm, gnome-terminal, konsole, etc.), almost all terminals supported
+* **Tmux/Screen**:    ✅ Supported
+* **SSH sessions**:   ✅ Supported when terminal supports colors
 
 ### macOS
-- **Terminal.app**: Full support
-- **iTerm2**: Excellent support
-- **Other terminals**: Generally well supported
+- **Terminal.app**:    ✅ Full support
+- **iTerm2**:          ✅ Excellent support
+- **Other terminals**: ✅  Generally well supported
+---
 
-## 🛠️ Development Examples
+## 🛠️ Development & Testing
 
 ### Testing Colors
 
@@ -313,34 +390,39 @@ def test_all_colors():
 test_all_colors()
 ```
 
-### Color Compatibility Check
+### Check Support
 
 ```python
-def check_color_support():
-    """Check and display color support information"""
-    from make_colors import MakeColors
-    import sys
-    import os
-    
-    print("=== Color Support Information ===")
-    print(f"Platform: {sys.platform}")
-    print(f"Colors supported: {MakeColors.supports_color()}")
-    print(f"MAKE_COLORS env: {os.getenv('MAKE_COLORS', 'not set')}")
-    print(f"MAKE_COLORS_FORCE env: {os.getenv('MAKE_COLORS_FORCE', 'not set')}")
-    
-    if hasattr(sys.stdout, 'isatty'):
-        print(f"Is TTY: {sys.stdout.isatty()}")
-
-check_color_support()
+from make_colors import MakeColors
+print("Supports colors:", MakeColors.supports_color())
 ```
+
+```python
+def test_all_colors():
+    """Test all available colors"""
+    colors = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
+    light_colors = [f'light{color}' for color in colors if color != 'black'] + ['lightgrey']
+    
+    print("=== Standard Colors ===")
+    for color in colors:
+        print(make_colors(f"  {color.ljust(10)}", color, "black"))
+    
+    print("\n=== Light Colors ===")
+    for color in light_colors:
+        print(make_colors(f"  {color.ljust(15)}", color, "black"))
+
+# Run the test
+test_all_colors()
+
+---
 
 ## 🎯 Best Practices
 
-1. **Check color support** before using in production applications
-2. **Provide fallbacks** for environments without color support  
-3. **Use environment variables** to control color output
+1. **Always check color support** `MakeColors.supports_color()` before production use
+2. **Provide fallbacks** for environments without color support (e.g. plain text when disabled)
+3. **Use env vars for CI/CD or logging**
 4. **Choose contrasting colors** for better readability
-5. **Test on multiple platforms** to ensure compatibility
+5. **Test on multiple OSes/terminals/platforms** to ensure compatibility
 
 ```python
 from make_colors import make_colors, MakeColors
@@ -356,18 +438,60 @@ def safe_print(text, fg="white", bg=None):
 safe_print("This works everywhere!", "green")
 ```
 
+---
+
+## ⚠️ Error Handling
+
+* Invalid color → falls back to white on black
+* Unknown attribute → ignored silently
+* Raise `MakeColorsError` for invalid color names (if strict)
+* Raise `MakeColorsWarning` for warnings
+
+```python
+try:
+    print(make_colors("Oops", "notacolor"))
+except Exception as e:
+    print("Handled:", e)
+```
+
+---
+
+## 📊 Performance
+
+* Traditional call: \~0.00001s per render
+* Rich markup parsing: slightly slower (\~+10–15%)
+* Suitable for **high-frequency logging**
+
+---
+
+## 📑 Quick Reference
+
+* ✅ Single color: `[red]text[/]`
+* ✅ With background: `[white on red]text[/]`
+* ✅ With style: `[bold green]text[/]`
+* ✅ Combined: `[bold white on red]ALERT[/]`
+* ✅ Multiple tags: `[cyan]Info[/] [red]Error[/]`
+
+---
+
 ## 🤝 Contributing
 
+PRs welcome! Open issues for feature requests or bugs.
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Licensed under the **MIT License**. See [LICENSE](LICENSE).
 
-## Author
+---
 
-[Hadi Cahyadi](mailto:cumulus13@gmail.com)
-    
+## 👨‍💻 Author
+
+**Hadi Cahyadi**
+📧 [cumulus13@gmail.com](mailto:cumulus13@gmail.com)
+
 [![Buy Me a Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/cumulus13)
 
 [![Donate via Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/cumulus13)
@@ -376,4 +500,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-Made with ❤️ by Hadi Cahyadi for colorful terminal experiences!
+✨ Made with ❤️ by Hadi Cahyadi for colorful terminal experiences!
