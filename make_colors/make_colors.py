@@ -283,7 +283,6 @@ class MakeColors(object):
         ansi_sequence = ";".join(codes)
         return f"[{ansi_sequence}m{string}[0m"
 
-
     def rich_colored(self, string, color=None, bg_color=None, style=None):
         """Generate rich formatted text with enhanced styling options.
         
@@ -794,6 +793,7 @@ def make_colors(string, foreground='white', background=None, attrs=[], force=Fal
         - Cross-platform compatible (Windows 10+, Linux, macOS)
         - Fully compatible with Rich console format
     """
+    
     # Check for Rich markup format first
     if '[' in string and ']' in string and '[/' in string:
         results = parse_rich_markup(string)
@@ -1383,3 +1383,4 @@ if __name__ == '__main__':
     _print("Rich markup format with multiple tags is fully supported!")
     _print("All methods now support automatic attribute detection from color strings!")
     _print("Multiple separators (-, _, ,) are supported for maximum flexibility!")
+
