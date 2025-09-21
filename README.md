@@ -133,6 +133,11 @@ print(make_colors("Warning!", "yellow_red"))
 # Using dash separator
 print(make_colors("Info message", "blue-white"))
 print(make_colors("Debug info", "cyan-black"))
+
+# Using comma separator
+print(make_colors("Critical message", "white,blue"))
+print(make_colors("Alert info", "w,r"))
+
 ```
 
 ### Advanced Examples

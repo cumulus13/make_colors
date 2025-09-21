@@ -490,7 +490,7 @@ def getSort(data=None, foreground='', background=''):
 
     Args:
         data (str, optional): Combined color string with format "foreground-background" 
-                             or "foreground_background". 
+                             or "foreground_background" or "foreground,background". 
                              Examples: "red-yellow", "blue_white", "r-g"
         foreground (str): Explicit foreground color specification.
                          Examples: "red", "r", "lightblue"
@@ -505,25 +505,29 @@ def getSort(data=None, foreground='', background=''):
 
     Example:
         >>> getSort("red-yellow")           # Returns ("red", "yellow")
+        >>> getSort("red,yellow")           # Returns ("red", "yellow")
         >>> getSort("r_b")                  # Returns ("red", "black")  
         >>> getSort(foreground="blue")      # Returns ("blue", None)
         >>> getSort("lg-on_red")           # Returns ("lightgreen", "on_red")
         >>> getSort()                      # Returns ("white", None)
 
     Note:
-        - Supports both "-" and "_" as delimiters
+        - Supports both "-" and "_" and "," as delimiters
         - Automatically expands abbreviations using color_map()
         - Handles nested delimiter parsing for complex specifications
         - Debug output available via MAKE_COLORS_DEBUG environment variable
     """
     # Debug output for troubleshooting color parsing
+    if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
+        _print("getSort: data =", data)
+        _print("getSort: foreground =", foreground)
+        _print("getSort: background =", background)
+
     if data:
-        if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
-            _print("getSort: data =", data)
         
         # Parse combined format: "foreground-background" or "foreground_background"  
-        if "-" in data or "_" in data:
-            foreground, background = re.split("-|_", data)
+        if "-" in data or "_" in data or "," in data:
+            foreground, background = re.split("-|_|,", data)
             if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
                 _print("getSort: foreground [1] =", foreground)
                 _print("getSort: background [1] =", background)
@@ -540,8 +544,8 @@ def getSort(data=None, foreground='', background=''):
         _print(f"getSort: background: {background}")
     
     # Handle nested delimiters in foreground specification
-    if foreground and len(foreground) > 2 and ("-" in foreground or "_" in foreground):
-        _foreground, _background = re.split("-|_", foreground)
+    if foreground and len(foreground) > 2 and ("-" in foreground or "_" in foreground or "," in foreground):
+        _foreground, _background = re.split("-|_|,", foreground)
         foreground = _foreground or foreground
         background = _background or background
         if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
@@ -549,8 +553,8 @@ def getSort(data=None, foreground='', background=''):
             _print("getSort: background [3] =", background)
     
     # Handle nested delimiters in background specification        
-    elif background and len(background) > 2 and ("-" in background or "_" in background):
-        _foreground, _background = re.split("-|_", background)
+    elif background and len(background) > 2 and ("-" in background or "_" in background or "," in background):
+        _foreground, _background = re.split("-|_|,", background)
         foreground = _foreground or foreground
         background = _background or background
         if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
@@ -585,7 +589,8 @@ def getSort(data=None, foreground='', background=''):
     if os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']:
         _print(f"getSort: returning foreground: {foreground}")
         _print(f"getSort: returning background: {background}")
-    return foreground, background
+
+    return foreground.strip() if foreground else foreground, background.strip() if background else background
 
 def parse_rich_markup(text):
     pattern = r'\[([^\]]+)\](.*?)\[/\]'
@@ -748,7 +753,7 @@ def make_colors(string, foreground='white', background=None, attrs=[], force=Fal
         _print(f"ATTRS: {attrs}")
     
     # Parse combined color format (e.g., "red-yellow", "r_b")    
-    if "-" in foreground or "_" in foreground:
+    if "-" in foreground or "_" in foreground or "," in foreground:
         foreground, background = getSort(foreground)
     elif (foreground and len(foreground) < 3) or (background and len(background) < 3):
         # Expand abbreviations
@@ -798,6 +803,9 @@ def make_color(string, foreground='white', background=None, attrs=[], force=Fals
         make_colors: The main implementation function
     """
     return make_colors(string, foreground, background, attrs, force)
+
+def make(string, foreground='white', background=None, attrs=[], force=False):
+    return make_colors(string, foreground='white', background=None, attrs=[], force=False)
 
 def print(string, foreground='white', background=None, attrs=[], force=False):
     """Print colored text directly to the console with automatic formatting.
@@ -907,10 +915,11 @@ if __name__ == '__main__':
     
     # Test combined format
     _print("=== Combined Format Tests ===")
-    _print(make_colors("Red on yellow", "red-yellow"))
-    _print(make_colors("Blue on white", "blue_white"))
-    _print(make_colors("Green on black", "g-b"))
-    _print(make_colors("Light blue on red", "lb_r"))
+    _print(make_colors("Red on yellow, seperated by '-'", "red-yellow"))
+    _print(make_colors("Blue on white, seperated by '_'", "blue_white"))
+    _print(make_colors("Green(g) on black(b), seperated by '-'", "g-b"))
+    _print(make_colors("Light blue(lb) on red(r), seperated by '_'", "lb_r"))
+    _print(make_colors("white(w) on magenta(m), seperated by ','", "w,m"))
     _print("")
     
     # Test rich markup format
