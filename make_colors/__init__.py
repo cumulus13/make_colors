@@ -1,4 +1,4 @@
-from .make_colors import make_colors, MakeColors, make_color
+from .make_colors import make_colors, MakeColors, make_color, make, getSort, print, color_map, MakeColor
 
 from . import __version__ as version
 __version__ 	= version.version
