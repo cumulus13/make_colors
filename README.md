@@ -71,6 +71,16 @@ print(make_colors("One-liner style", "green_yellow"))  # green text on yellow ba
 
 # Rich markup
 print(make_colors("[bold white on red] CRITICAL [/]") )
+
+# import all 
+from make_colors import *
+
+print(bl("Im Blue"))
+color = Colors('red', 'white')
+print(color("White on Red"))
+color = Color('white', 'red')
+print(color("TEST"))
+
 ```
 
 ---
@@ -441,6 +451,30 @@ def safe_print(text, fg="white", bg=None):
 
 # Usage
 safe_print("This works everywhere!", "green")
+```
+
+## 🧙 Magick
+```python
+    
+    from make_colors import *
+
+    print(red("Error!"))
+    print(bl("Im Blue"))
+    print(green_on_black("Success"))
+
+    # Abbreviation
+    print(w_bl("White on Blue"))      # white on blue
+    print(r_w("Red on White"))        # red on white
+    print(g_b("Green on Black"))      # green on black
+    print(lb_b("Light Blue on Black"))
+
+    color = Colors('red', 'white')
+    print(color("White on Red"))
+    color = Color('white', 'red')
+    print(color("TEST"))
+
+
+    # Try and see what happened 👏 😄
 ```
 
 ---

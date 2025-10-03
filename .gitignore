@@ -11,3 +11,6 @@ traceback.log
 __pycache__/
 *__pycache__/
 *.orig
+
+# Added entries (1 items)
+*.sublime-workspace

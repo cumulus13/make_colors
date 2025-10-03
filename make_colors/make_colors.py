@@ -26,12 +26,50 @@ from __future__ import print_function
 import os
 import sys
 import re
+from typing import List, Tuple, Optional
+
+# try:
+#     from .colors import __all__ as colors_all
+# except Exception as e:
+#     from colors import __all__ as colors_all
 
 # Global variables for console mode handling
 MODE = 0
 _print = print
+REST = "[0m"
 
-__all__ = ['MakeColors', 'MakeColor', 'color_map', 'getSort', 'parse_rich_markup', 'make_colors', 'make_color', 'make']
+_USE_COLOR = sys.stdout.isatty()
+_DEBUG = os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']
+
+_MAIN_ABBR = {
+    'black': 'b', 'blue': 'bl', 'red': 'r', 'green': 'g',
+    'yellow': 'y', 'magenta': 'm', 'cyan': 'c', 'white': 'w',
+    'lightblue': 'lb', 'lightred': 'lr', 'lightgreen': 'lg',
+    'lightyellow': 'ly', 'lightmagenta': 'lm', 'lightcyan': 'lc',
+    'lightwhite': 'lw', 'lightblack': 'lk',
+}
+
+
+FG_CODES = {
+    'black': '30', 'red': '31', 'green': '32', 'yellow': '33',
+    'blue': '34', 'magenta': '35', 'cyan': '36', 'white': '37',
+    'lightblack': '90', 'lightgrey': '90', 'lightred': '91',
+    'lightgreen': '92', 'lightyellow': '93', 'lightblue': '94',
+    'lightmagenta': '95', 'lightcyan': '96', 'lightwhite': '97',
+}
+
+BG_CODES = {
+    'black': '40', 'red': '41', 'green': '42', 'yellow': '43',
+    'blue': '44', 'magenta': '45', 'cyan': '46', 'white': '47',
+    'lightblack': '100', 'lightgrey': '100', 'lightred': '101',
+    'lightgreen': '102', 'lightyellow': '103', 'lightblue': '104',
+    'lightmagenta': '105', 'lightcyan': '106', 'lightwhite': '107',
+}
+
+ATTR_CODES = {
+    'bold': '1', 'dim': '2', 'italic': '3', 'underline': '4',
+    'blink': '5', 'reverse': '7', 'strikethrough': '9', 'strike': '9',
+}
 
 # Windows-specific console setup for ANSI color support
 if sys.platform == 'win32':
@@ -385,6 +423,8 @@ class MakeColor(MakeColors):
     """
     pass
 
+RESET = "\033[0m"
+
 def color_map(color):
     """Map color abbreviations and short codes to full color names.
     
@@ -632,6 +672,9 @@ def getSort(data=None, foreground='', background='', attrs=[]):
         _print(f"getSort: returning attrs: {detected_attrs}")
 
     return foreground.strip() if foreground else foreground, background.strip() if background else background, detected_attrs
+
+def translate(*args, **kwargs):
+    return getSort(*args, **kwargs)
 
 def parse_rich_markup(text):
     """Parse Rich console markup format and extract styling information.
@@ -972,6 +1015,160 @@ def print(string, foreground='white', background=None, attrs=[], force=False):
         - Original print function is preserved as _print for internal use
     """
     _print(make_colors(string, foreground, background, attrs, force))
+
+def print_exception(*args, **kwargs):
+    """
+    Print exception with different colors for each type, value, dan traceback.
+    """
+    exc_type, exc_value, exc_tb = sys.exc_info()
+    if not exc_type:
+        return _print(make_colors("No active exception to print !", "lightred"))
+
+    tb_lines = traceback.format_tb(exc_tb)
+    for line in tb_lines:
+        _print(make_colors(line.strip(), kwargs.get('tb_color', "cyan")))
+
+    _print(make_colors(f"{exc_type.__name__}: ", kwargs.get("tp_color", "yellow")), end='')
+    _print(make_colors(str(exc_value), kwargs.get("tv_color", "white-red-blink")))
+
+    return exc_type, exc_value, exc_tb
+
+def _make_ansi_func(fg: str, bg: Optional[str] = None, attrs: Optional[List[str]] = None):
+    if not _USE_COLOR:
+        return lambda text: str(text)
+
+    codes = []
+    if attrs:
+        for attr in attrs:
+            code = ATTR_CODES.get(attr)
+            if code and code not in codes:
+                codes.append(code)
+    if bg:
+        bg_code = BG_CODES.get(bg)
+        if bg_code:
+            codes.append(bg_code)
+    fg_code = FG_CODES.get(fg)
+    if fg_code:
+        codes.append(fg_code)
+    if not codes:
+        return lambda text: str(text)
+
+    ansi_start = f"\033[{';'.join(codes)}m"
+    return lambda text: f"{ansi_start}{text}{RESET}"
+
+# === GENERATE SEMUA FUNGSI ===
+_all_names = []
+
+# 1. Nama lengkap foreground
+_fg_funcs = {name: _make_ansi_func(name) for name in FG_CODES}
+_all_names.extend(FG_CODES.keys())
+
+# 2. Kombinasi lengkap: red_on_white
+_combo_funcs = {}
+for fg in FG_CODES:
+    for bg in BG_CODES:
+        name = f"{fg}_on_{bg}"
+        _combo_funcs[name] = _make_ansi_func(fg, bg)
+        _all_names.append(name)
+
+# 3. Singkatan kombinasi: w_bl, r_w, dll
+_abbr_combo_funcs = {}
+for fg in FG_CODES:
+    for bg in BG_CODES:
+        fg_abbr = _MAIN_ABBR.get(fg)
+        bg_abbr = _MAIN_ABBR.get(bg)
+        if fg_abbr and bg_abbr:
+            name = f"{fg_abbr}_{bg_abbr}"
+            if name not in _all_names:
+                _abbr_combo_funcs[name] = _make_ansi_func(fg, bg)
+                _all_names.append(name)
+
+# 4. 🔥 SINGKATAN FOREGROUND-ONLY: bl, r, g, w, lb, dll 🔥
+_abbr_fg_funcs = {}
+for full_name in FG_CODES:
+    abbr = _MAIN_ABBR.get(full_name)
+    if abbr and abbr not in _all_names:
+        _abbr_fg_funcs[abbr] = _make_ansi_func(full_name)
+        _all_names.append(abbr)
+
+# Ekspor SEMUA ke namespace modul
+globals().update(_fg_funcs)
+globals().update(_combo_funcs)
+globals().update(_abbr_combo_funcs)
+globals().update(_abbr_fg_funcs)
+
+def colorize(
+    text: str,
+    data: Optional[str] = None,
+    fg: str = '',
+    bg: str = '',
+    attrs: Optional[List[str]] = None
+) -> str:
+    if attrs is None:
+        attrs = []
+    parsed_fg, parsed_bg, parsed_attrs = getSort(data=data, foreground=fg, background=bg, attrs=attrs)
+    func = _make_ansi_func(parsed_fg, parsed_bg, parsed_attrs)
+    return func(text)
+
+class Color:
+    def __init__(self, foreground, background=None):
+        self.COLOR = self.convert(foreground, background)
+
+    def convert(self, foreground, background=None):
+        # Check if attributes are embedded in foreground string or if combined format is used
+        if foreground and any(attr in foreground.lower() for attr in ['bold', 'dim', 'italic', 'underline', 'blink', 'reverse', 'strikethrough', 'strike']):
+            foreground, background, parsed_attrs = getSort(foreground, background=background, attrs=parsed_attrs)
+        elif "-" in foreground or "_" in foreground or "," in foreground:
+            foreground, background, parsed_attrs = getSort(foreground, attrs=parsed_attrs)
+        elif (foreground and len(foreground) < 3) or (background and len(background) < 3):
+            # Expand abbreviations
+            foreground, background, parsed_attrs = getSort(foreground=foreground, background=background, attrs=parsed_attrs)
+        else:
+            # No parsing needed, but still check for attributes in background
+            if background and any(attr in background.lower() for attr in ['bold', 'dim', 'italic', 'underline', 'blink', 'reverse', 'strikethrough', 'strike']):
+                foreground, background, parsed_attrs = getSort(foreground=foreground, background=background, attrs=parsed_attrs)
+        
+        fore_color_bank = {
+            'black': '30', 'red': '31', 'green': '32', 'yellow': '33',
+            'blue': '34', 'magenta': '35', 'cyan': '36', 'white': '37',
+            'lightblack': '90', 'lightgrey': '90', 'lightred': '91',
+            'lightgreen': '92', 'lightyellow': '93', 'lightblue': '94',
+            'lightmagenta': '95', 'lightcyan': '96', 'lightwhite': '97',
+        }
+
+        back_color_bank = {
+            'black': '40', 'red': '41', 'green': '42', 'yellow': '43',
+            'blue': '44', 'magenta': '45', 'cyan': '46', 'white': '47',
+            'on_black': '40', 'on_red': '41', 'on_green': '42',
+            'on_yellow': '43', 'on_blue': '44', 'on_magenta': '45',
+            'on_cyan': '46', 'on_white': '47',
+            'lightblack': '100', 'lightgrey': '100', 'lightred': '101',
+            'lightgreen': '102', 'lightyellow': '103', 'lightblue': '104',
+            'lightmagenta': '105', 'lightcyan': '106', 'lightwhite': '107',
+            'on_lightblack': '100', 'on_lightgrey': '100', 'on_lightred': '101',
+            'on_lightgreen': '102', 'on_lightyellow': '103', 'on_lightblue': '104',
+            'on_lightmagenta': '105', 'on_lightcyan': '106', 'on_lightwhite': '107',
+        }
+
+        fg = fore_color_bank.get(foreground, '37')  # default white
+        bg = back_color_bank.get(background, '40')  # default black
+
+        return f"\033[{bg};{fg}m"
+
+    def format(self, text):
+        return f"{self.COLOR}{text}{RESET}"
+
+    def __str__(self):
+        return self.COLOR
+
+    def __call__(self, text):
+        return self.format(text)
+
+class Colors(Color):
+    pass
+
+__all__ = _all_names + ['MakeColors', 'MakeColor', 'color_map', 'getSort', 'parse_rich_markup', 'make_colors', 'make_color', 'make', 'colorize', "Color", "Colors"]
+
 
 # Example usage and testing section
 if __name__ == '__main__':
@@ -1339,6 +1536,25 @@ if __name__ == '__main__':
         status_color = "green" if status == "✓" else "red"
         print(f"{test_name}: ", "white")
         print(status, status_color)
+
+    _print("🧙 WITH MAGICK:\n")
+    # 1. A complete name
+    print(red("Error!"))
+    print(bl("Im Blue"))
+    print(green_on_black("Success"))
+
+    # 2. Abbreviation
+    print(w_bl("White on Blue"))      # white on blue
+    print(r_w("Red on White"))        # red on white
+    print(g_b("Green on Black"))      # green on black
+    print(lb_b("Light Blue on Black"))
+
+    # 3. Dynamic with attributes
+    print(colorize("Bold Red", "red-bold"))
+    print(colorize("Underlined Green", fg="g", bg="b", attrs=["underline"]))
+
+    # 4. Parsing flexible
+    print(colorize("Blinking Magenta", "magenta-blink"))
     
     _print("")
     _print("=== New Features Summary ===")
