@@ -1017,6 +1017,7 @@ def print(string, foreground='white', background=None, attrs=[], force=False):
     _print(make_colors(string, foreground, background, attrs, force))
 
 def print_exception(*args, **kwargs):
+    import traceback
     """
     Print exception with different colors for each type, value, dan traceback.
     """
@@ -1026,9 +1027,9 @@ def print_exception(*args, **kwargs):
 
     tb_lines = traceback.format_tb(exc_tb)
     for line in tb_lines:
-        _print(make_colors(line.strip(), kwargs.get('tb_color', "cyan")))
+        _print(make_colors(line.strip(), kwargs.get('tb_color', "lc")))
 
-    _print(make_colors(f"{exc_type.__name__}: ", kwargs.get("tp_color", "yellow")), end='')
+    _print(make_colors(f"{exc_type.__name__}: ", kwargs.get("tp_color", "y")), end='')
     _print(make_colors(str(exc_value), kwargs.get("tv_color", "white-red-blink")))
 
     return exc_type, exc_value, exc_tb
