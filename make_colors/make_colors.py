@@ -39,7 +39,10 @@ MODE = 0
 _print = print
 REST = "[0m"
 
-_USE_COLOR = sys.stdout.isatty()
+try:
+    _USE_COLOR = sys.stdout.isatty()
+except:
+    _USE_COLOR = True
 _DEBUG = os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']
 
 _MAIN_ABBR = {
