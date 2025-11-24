@@ -1,0 +1,2587 @@
+
+.. ======================================================================
+.. FILE 1: attributes.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+Attribute Detection
+===================
+
+New Feature: Automatic Attribute Detection
+-------------------------------------------
+
+make_colors now supports automatic detection of text attributes from color strings.
+
+Quick Examples
+--------------
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   # Bold text
+   print(make_colors("Bold red", "bold-red"))
+   
+   # Italic text
+   print(make_colors("Italic blue", "italic-blue"))
+   
+   # Multiple attributes
+   print(make_colors("Styled", "bold-underline-green"))
+
+Supported Separators
+--------------------
+
+Use any of these separators:
+
+- **Hyphen**: ``"bold-red-yellow"``
+- **Underscore**: ``"italic_blue_white"``
+- **Comma**: ``"underline,green,black"``
+
+All Attributes
+--------------
+
+=============== =============================================
+Attribute       Description
+=============== =============================================
+``bold``        Bold or bright text
+``dim``         Dimmed text
+``italic``      Italic text (terminal dependent)
+``underline``   Underlined text
+``blink``       Blinking text
+``reverse``     Reverse foreground and background
+``strikethrough`` Strikethrough text
+``strike``      Alias for strikethrough
+=============== =============================================
+
+See :doc:`usage` for complete documentation.
+
+.. ======================================================================
+.. FILE 2: changelog.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+Attribute Detection
+===================
+
+New Feature: Automatic Attribute Detection
+-------------------------------------------
+
+make_colors now supports automatic detection of text attributes from color strings.
+
+Quick Examples
+--------------
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   # Bold text
+   print(make_colors("Bold red", "bold-red"))
+   
+   # Italic text
+   print(make_colors("Italic blue", "italic-blue"))
+   
+   # Multiple attributes
+   print(make_colors("Styled", "bold-underline-green"))
+
+Supported Separators
+--------------------
+
+Use any of these separators:
+
+- **Hyphen**: ``"bold-red-yellow"``
+- **Underscore**: ``"italic_blue_white"``
+- **Comma**: ``"underline,green,black"``
+
+All Attributes
+--------------
+
+=============== =============================================
+Attribute       Description
+=============== =============================================
+``bold``        Bold or bright text
+``dim``         Dimmed text
+``italic``      Italic text (terminal dependent)
+``underline``   Underlined text
+``blink``       Blinking text
+``reverse``     Reverse foreground and background
+``strikethrough`` Strikethrough text
+``strike``      Alias for strikethrough
+=============== =============================================
+
+See :doc:`usage` for complete documentation.
+
+# ======================================================================
+# FILE 3: conf.py
+# Combined at: 2025-11-24 14:24:45
+# ======================================================================
+
+# Configuration file for the Sphinx documentation builder.
+#
+# For the full list of built-in configuration values, see the documentation:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+# -- Project information -----------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
+def get_version():
+    """
+    Get the version from __version__.py file or package.
+    
+    The __version__.py file should contain:
+    version = "2.0.0"
+    """
+    version = "2.0.0"  # Fallback version
+    
+    # Try to read from root __version__.py first
+    try:
+        version_file = Path(__file__).parent / "__version__.py"
+        if version_file.is_file():
+            with open(version_file, "r", encoding='utf-8') as f:
+                content = f.read()
+                # Use regex to find version
+                match = re.search(r'version\s*=\s*["\']([^"\']+)["\']', content)
+                if match:
+                    return match.group(1)
+    except Exception as e:
+        if os.getenv('TRACEBACK', '').lower() in ['1', 'true']:
+            print(f"Warning: Error reading __version__.py from root: {e}")
+            print(traceback.format_exc())
+    
+    # Try to read from make_colors/__version__.py
+    try:
+        version_file = Path(__file__).parent / NAME / "__version__.py"
+        if version_file.is_file():
+            with open(version_file, "r", encoding='utf-8') as f:
+                content = f.read()
+                match = re.search(r'version\s*=\s*["\']([^"\']+)["\']', content)
+                if match:
+                    return match.group(1)
+    except Exception as e:
+        if os.getenv('TRACEBACK', '').lower() in ['1', 'true']:
+            print(f"Warning: Error reading __version__.py from package: {e}")
+            print(traceback.format_exc())
+    
+    # Try to read from make_colors/__init__.py
+    try:
+        init_file = Path(__file__).parent / NAME / "__init__.py"
+        if init_file.is_file():
+            with open(init_file, "r", encoding='utf-8') as f:
+                content = f.read()
+                match = re.search(r'__version__\s*=\s*["\']([^"\']+)["\']', content)
+                if match:
+                    return match.group(1)
+    except Exception as e:
+        if os.getenv('TRACEBACK', '').lower() in ['1', 'true']:
+            print(f"Warning: Error reading version from __init__.py: {e}")
+    
+    print(f"Warning: Could not determine version, using fallback: {version}")
+    return version
+
+
+project = 'make_colors'
+copyright = '2024, Hadi Cahyadi (cumulus13)'
+author = 'Hadi Cahyadi (cumulus13)'
+release = get_version()
+
+# -- General configuration ---------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
+    'sphinx.ext.coverage',
+    'sphinx.ext.ifconfig',
+    'sphinx_copybutton',
+    'sphinx_tabs.tabs',
+]
+
+templates_path = ['_templates']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+# -- Options for HTML output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+
+html_theme = 'sphinx_rtd_theme'
+html_static_path = ['_static']
+
+# Theme options
+html_theme_options = {
+    'logo_only': False,
+    # 'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+    'style_external_links': True,
+    'style_nav_header_background': '#2c3e50',
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
+}
+
+# Custom CSS for dark theme enhancements
+html_css_files = [
+    'custom.css',
+]
+
+# Napoleon settings for Google and NumPy style docstrings
+napoleon_google_docstring = True
+napoleon_numpy_docstring = True
+napoleon_include_init_with_doc = True
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = True
+napoleon_use_admonition_for_examples = True
+napoleon_use_admonition_for_notes = True
+napoleon_use_admonition_for_references = True
+napoleon_use_ivar = True
+napoleon_use_param = True
+napoleon_use_rtype = True
+napoleon_type_aliases = None
+
+# Autodoc settings
+autodoc_default_options = {
+    'members': True,
+    'member-order': 'bysource',
+    'special-members': '__init__',
+    'undoc-members': True,
+    'exclude-members': '__weakref__'
+}
+
+# Intersphinx mapping
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+}
+
+# Add any paths that contain custom static files (such as style sheets)
+html_logo = None
+html_favicon = None
+
+# -- Extension configuration -------------------------------------------------
+
+# sphinx-copybutton configuration
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_is_regexp = True
+
+# Todo extension
+todo_include_todos = True
+
+.. ======================================================================
+.. FILE 4: contributing.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+Contributing Guide
+==================
+
+We welcome contributions to make_colors!
+
+How to Contribute
+-----------------
+
+1. **Fork the Repository**
+
+   .. code-block:: bash
+
+      git clone https://github.com/cumulus13/make_colors.git
+      cd make_colors
+
+2. **Create a Branch**
+
+   .. code-block:: bash
+
+      git checkout -b feature/your-feature-name
+
+3. **Make Changes**
+
+   - Write code
+   - Add tests
+   - Update documentation
+
+4. **Test Your Changes**
+
+   .. code-block:: bash
+
+      python -m pytest tests/
+
+5. **Submit Pull Request**
+
+   Push your changes and create a pull request on GitHub.
+
+Development Setup
+-----------------
+
+.. code-block:: bash
+
+   # Install in development mode
+   pip install -e ".[dev]"
+   
+   # Run tests
+   pytest
+   
+   # Build documentation
+   cd docs
+   make html
+
+Code Style
+----------
+
+- Follow PEP 8
+- Use type hints
+- Write docstrings
+- Add tests for new features
+
+Documentation
+-------------
+
+When adding features, update:
+
+- Docstrings
+- Usage guide
+- Examples
+- API reference
+
+Contact
+-------
+
+- GitHub: https://github.com/cumulus13/make_colors
+- Issues: https://github.com/cumulus13/make_colors/issues
+
+.. ======================================================================
+.. FILE 5: examples.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+Practical Examples
+==================
+
+This section provides real-world examples of using make_colors in various scenarios.
+
+Logging System
+--------------
+
+Create a colorful logging system with different levels:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   import datetime
+   
+   class ColorLogger:
+       """Custom logger with colored output."""
+       
+       LEVELS = {
+           'DEBUG': ('cyan', None),
+           'INFO': ('blue', None),
+           'SUCCESS': ('green', None),
+           'WARNING': ('yellow', 'on_black'),
+           'ERROR': ('red', 'on_white'),
+           'CRITICAL': ('white', 'on_red')
+       }
+       
+       def __init__(self, name='Logger'):
+           self.name = name
+       
+       def _log(self, level, message):
+           timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+           fg, bg = self.LEVELS.get(level, ('white', None))
+           
+           # Color the level tag
+           level_str = make_colors(f"[{level:8}]", fg, bg)
+           
+           # Color the logger name
+           name_str = make_colors(f"[{self.name}]", "lightmagenta")
+           
+           # Print formatted log
+           print(f"{timestamp} {level_str} {name_str} {message}")
+       
+       def debug(self, msg):
+           self._log('DEBUG', msg)
+       
+       def info(self, msg):
+           self._log('INFO', msg)
+       
+       def success(self, msg):
+           self._log('SUCCESS', msg)
+       
+       def warning(self, msg):
+           self._log('WARNING', msg)
+       
+       def error(self, msg):
+           self._log('ERROR', msg)
+       
+       def critical(self, msg):
+           self._log('CRITICAL', msg)
+   
+   # Usage
+   logger = ColorLogger('MyApp')
+   logger.debug('Database connection initialized')
+   logger.info('User authentication started')
+   logger.success('Operation completed successfully')
+   logger.warning('Deprecated function called')
+   logger.error('Failed to read configuration file')
+   logger.critical('System resources exhausted')
+
+Progress Bar
+------------
+
+Create an animated progress bar with colors:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   import time
+   import sys
+   
+   def progress_bar(total, prefix='Progress:', length=50, fill='█'):
+       """
+       Display a colored progress bar.
+       
+       Args:
+           total (int): Total iterations
+           prefix (str): Prefix string
+           length (int): Character length of bar
+           fill (str): Bar fill character
+       """
+       def print_progress(iteration):
+           percent = (iteration / total) * 100
+           filled_len = int(length * iteration // total)
+           bar = fill * filled_len + '░' * (length - filled_len)
+           
+           # Choose color based on progress
+           if percent < 30:
+               color = 'red'
+           elif percent < 70:
+               color = 'yellow'
+           else:
+               color = 'green'
+           
+           colored_bar = make_colors(bar, color)
+           percent_str = make_colors(f"{percent:>6.1f}%", 'bold-' + color)
+           
+           sys.stdout.write(f'\r{prefix} |{colored_bar}| {percent_str}')
+           sys.stdout.flush()
+       
+       # Simulate progress
+       for i in range(total + 1):
+           time.sleep(0.05)
+           print_progress(i)
+       
+       print()  # New line after completion
+   
+   # Usage
+   progress_bar(100, prefix='Download:')
+   progress_bar(50, prefix='Processing:', length=30)
+
+Status Indicators
+-----------------
+
+Create status indicators for various states:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   class Status:
+       """Status indicator with icons and colors."""
+       
+       STATES = {
+           'success': ('✓', 'lightgreen'),
+           'error': ('✗', 'lightred'),
+           'warning': ('⚠', 'lightyellow'),
+           'info': ('ℹ', 'lightblue'),
+           'running': ('●', 'lightcyan'),
+           'pending': ('◐', 'lightmagenta'),
+           'stopped': ('■', 'lightblack'),
+       }
+       
+       @staticmethod
+       def show(state, message):
+           """Display a status message."""
+           if state not in Status.STATES:
+               state = 'info'
+           
+           icon, color = Status.STATES[state]
+           icon_colored = make_colors(icon, color)
+           print(f"{icon_colored} {message}")
+       
+       @staticmethod
+       def success(msg):
+           Status.show('success', msg)
+       
+       @staticmethod
+       def error(msg):
+           Status.show('error', msg)
+       
+       @staticmethod
+       def warning(msg):
+           Status.show('warning', msg)
+       
+       @staticmethod
+       def info(msg):
+           Status.show('info', msg)
+   
+   # Usage
+   Status.success('All tests passed')
+   Status.error('Connection timeout')
+   Status.warning('Deprecated API used')
+   Status.info('Processing started')
+   Status.show('running', 'Server is running on port 8000')
+   Status.show('pending', 'Waiting for user input')
+
+Syntax Highlighting
+-------------------
+
+Simple syntax highlighter for code:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   import re
+   
+   class SyntaxHighlighter:
+       """Simple Python syntax highlighter."""
+       
+       PATTERNS = {
+           'keyword': (r'\b(def|class|import|from|if|else|elif|for|while|'
+                      r'return|try|except|with|as|pass|break|continue)\b',
+                      'blue'),
+           'string': (r'(["\'])(?:(?=(\\?))\2.)*?\1', 'yellow'),
+           'comment': (r'#.*$', 'lightblack'),
+           'number': (r'\b\d+\.?\d*\b', 'lightcyan'),
+           'function': (r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', 'lightgreen'),
+           'decorator': (r'@\w+', 'lightmagenta'),
+       }
+       
+       @staticmethod
+       def highlight(code):
+           """Highlight Python code."""
+           lines = code.split('\n')
+           result = []
+           
+           for line in lines:
+               highlighted = line
+               
+               # Apply patterns in order
+               for pattern_name, (pattern, color) in SyntaxHighlighter.PATTERNS.items():
+                   matches = list(re.finditer(pattern, line))
+                   
+                   if matches:
+                       offset = 0
+                       temp_line = line
+                       
+                       for match in matches:
+                           start = match.start() + offset
+                           end = match.end() + offset
+                           text = match.group(0)
+                           
+                           # For function names, only color the name part
+                           if pattern_name == 'function':
+                               text = match.group(1)
+                               end = start + len(text)
+                           
+                           colored = make_colors(text, color)
+                           temp_line = temp_line[:start] + colored + temp_line[end:]
+                           offset += len(colored) - len(text)
+                       
+                       highlighted = temp_line
+               
+               result.append(highlighted)
+           
+           return '\n'.join(result)
+   
+   # Usage
+   code = '''
+   # Python example
+   def hello_world(name="World"):
+       """Greet someone."""
+       message = f"Hello, {name}!"
+       return message
+   
+   @decorator
+   class MyClass:
+       pass
+   '''
+   
+   print(SyntaxHighlighter.highlight(code))
+
+Table Formatter
+---------------
+
+Create colored tables:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   class ColorTable:
+       """Create colored formatted tables."""
+       
+       def __init__(self, headers, rows, header_color='bold-white-blue'):
+           self.headers = headers
+           self.rows = rows
+           self.header_color = header_color
+       
+       def _get_column_widths(self):
+           """Calculate column widths."""
+           widths = [len(h) for h in self.headers]
+           
+           for row in self.rows:
+               for i, cell in enumerate(row):
+                   widths[i] = max(widths[i], len(str(cell)))
+           
+           return widths
+       
+       def _format_row(self, cells, widths, color=None):
+           """Format a single row."""
+           formatted = []
+           for cell, width in zip(cells, widths):
+               text = str(cell).ljust(width)
+               if color:
+                   text = make_colors(text, color)
+               formatted.append(text)
+           
+           return '│ ' + ' │ '.join(formatted) + ' │'
+       
+       def _separator(self, widths, char='─'):
+           """Create separator line."""
+           return '├' + char + ('┼' + char).join([char * (w + 2) for w in widths]) + '┤'
+       
+       def display(self):
+           """Display the table."""
+           widths = self._get_column_widths()
+           
+           # Top border
+           print('┌' + ('┬').join(['─' * (w + 2) for w in widths]) + '┐')
+           
+           # Headers
+           print(self._format_row(self.headers, widths, self.header_color))
+           
+           # Separator
+           print(self._separator(widths, '═'))
+           
+           # Rows
+           for i, row in enumerate(self.rows):
+               # Alternate row colors for better readability
+               row_color = 'lightcyan' if i % 2 == 0 else None
+               print(self._format_row(row, widths, row_color))
+           
+           # Bottom border
+           print('└' + ('┴').join(['─' * (w + 2) for w in widths]) + '┘')
+   
+   # Usage
+   headers = ['Name', 'Age', 'City', 'Status']
+   rows = [
+       ['Alice', '30', 'New York', 'Active'],
+       ['Bob', '25', 'London', 'Inactive'],
+       ['Charlie', '35', 'Tokyo', 'Active'],
+       ['Diana', '28', 'Paris', 'Active'],
+   ]
+   
+   table = ColorTable(headers, rows)
+   table.display()
+
+Menu System
+-----------
+
+Create interactive colored menus:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   class ColorMenu:
+       """Interactive colored menu system."""
+       
+       def __init__(self, title, options):
+           self.title = title
+           self.options = options
+       
+       def display(self):
+           """Display the menu."""
+           # Title
+           print('\n' + '=' * 50)
+           title_colored = make_colors(self.title, 'bold-white-blue')
+           print(title_colored.center(50))
+           print('=' * 50 + '\n')
+           
+           # Options
+           for i, (key, description) in enumerate(self.options.items(), 1):
+               key_colored = make_colors(f"[{key}]", 'bold-yellow')
+               print(f"{key_colored} {description}")
+           
+           print('\n' + '=' * 50)
+       
+       def get_choice(self):
+           """Get user choice."""
+           self.display()
+           
+           while True:
+               choice = input(make_colors("\nEnter your choice: ", "bold-green"))
+               
+               if choice in self.options:
+                   return choice
+               else:
+                   error_msg = make_colors("✗ Invalid choice. Please try again.", "red")
+                   print(error_msg)
+   
+   # Usage
+   menu = ColorMenu(
+       "Main Menu",
+       {
+           '1': 'Start Application',
+           '2': 'View Settings',
+           '3': 'Help Documentation',
+           '4': 'About',
+           'q': 'Quit'
+       }
+   )
+   
+   choice = menu.get_choice()
+   print(make_colors(f"\nYou selected: {choice}", "green"))
+
+Diff Viewer
+-----------
+
+Show differences between texts with colors:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   import difflib
+   
+   def colored_diff(text1, text2, context=3):
+       """
+       Display colored diff between two texts.
+       
+       Args:
+           text1 (str): Original text
+           text2 (str): Modified text
+           context (int): Lines of context
+       """
+       lines1 = text1.splitlines()
+       lines2 = text2.splitlines()
+       
+       diff = difflib.unified_diff(
+           lines1, lines2,
+           lineterm='',
+           n=context
+       )
+       
+       for line in diff:
+           if line.startswith('---') or line.startswith('+++'):
+               print(make_colors(line, 'bold-white'))
+           elif line.startswith('@@'):
+               print(make_colors(line, 'bold-cyan'))
+           elif line.startswith('-'):
+               print(make_colors(line, 'red'))
+           elif line.startswith('+'):
+               print(make_colors(line, 'green'))
+           else:
+               print(line)
+   
+   # Usage
+   original = """Hello World
+   This is a test
+   Some content here"""
+   
+   modified = """Hello World
+   This is a modified test
+   Some new content here
+   Extra line added"""
+   
+   colored_diff(original, modified)
+
+File Type Icons
+---------------
+
+Display file types with colored icons:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   import os
+   
+   FILE_TYPES = {
+       '.py': ('🐍', 'lightblue'),
+       '.js': ('📜', 'lightyellow'),
+       '.html': ('🌐', 'lightred'),
+       '.css': ('🎨', 'lightmagenta'),
+       '.json': ('📋', 'lightgreen'),
+       '.md': ('📝', 'lightcyan'),
+       '.txt': ('📄', 'white'),
+       '.pdf': ('📕', 'red'),
+       '.zip': ('📦', 'yellow'),
+       '.jpg': ('🖼️', 'magenta'),
+       '.png': ('🖼️', 'cyan'),
+   }
+   
+   def list_files_colored(directory='.'):
+       """List files with colored icons."""
+       files = os.listdir(directory)
+       
+       print(make_colors(f"\n📁 {directory}", "bold-white-blue"))
+       print('─' * 60)
+       
+       for filename in sorted(files):
+           ext = os.path.splitext(filename)[1]
+           icon, color = FILE_TYPES.get(ext, ('📄', 'white'))
+           
+           colored_name = make_colors(filename, color)
+           print(f"{icon}  {colored_name}")
+   
+   # Usage
+   list_files_colored('.')
+
+See Also
+--------
+
+- :doc:`usage` - Detailed usage documentation
+- :doc:`api/main_functions` - API reference
+- :doc:`rich_markup` - Rich markup format guide
+
+.. ======================================================================
+.. FILE 6: index.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+Welcome to make_colors Documentation
+====================================
+
+**make_colors** is a comprehensive Python module for creating colored text output in terminals with support for both ANSI escape codes and Rich console formatting. It provides cross-platform compatibility for Windows 10+, Linux, and macOS terminals.
+
+.. image:: https://img.shields.io/badge/python-3.6+-blue.svg
+   :target: https://www.python.org/downloads/
+   :alt: Python Version
+
+.. image:: https://img.shields.io/badge/license-MIT-green.svg
+   :target: https://github.com/cumulus13/make_colors/blob/master/LICENSE
+   :alt: License
+
+.. image:: https://img.shields.io/github/stars/cumulus13/make_colors.svg
+   :target: https://github.com/cumulus13/make_colors
+   :alt: GitHub Stars
+
+Key Features
+------------
+
+- 🎨 **ANSI Escape Code Based Coloring** - Full support for terminal colors
+- 🌈 **Rich Console Format Support** - Advanced text formatting
+- 💻 **Windows Console Color Support** - Native Windows 10+ compatibility
+- 🔧 **Environment Variable Controls** - Global color settings management
+- ⚡ **Flexible Color Specification** - Full names, abbreviations, or codes
+- 🎭 **Background and Foreground Combinations** - Mix and match colors
+- 📝 **Multiple Rich Markup Tags** - Complex formatting support
+- ⚙️ **Attribute Detection** - Parse attributes from color strings
+- 🔄 **Multiple Separators Support** - Use `-`, `_`, or `,` as delimiters
+
+Quick Start
+-----------
+
+Installation
+~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   pip install make_colors
+
+Basic Usage
+~~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import make_colors
+
+   # Simple colored text
+   print(make_colors("Hello World!", "red"))
+   
+   # With background
+   print(make_colors("Warning!", "yellow", "on_black"))
+   
+   # Using abbreviations
+   print(make_colors("Info", "lb"))  # Light blue
+   
+   # Rich markup format
+   print(make_colors("[bold red]Error![/]"))
+   
+   # Attribute detection (NEW!)
+   print(make_colors("Success", "bold-green"))
+
+Documentation Contents
+----------------------
+
+.. toctree::
+   :maxdepth: 2
+   :caption: User Guide
+   
+   installation
+   quickstart
+   usage
+   examples
+   rich_markup
+   attributes
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference
+   
+   api/main_functions
+   api/classes
+   api/utilities
+   api/constants
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Advanced Topics
+   
+   advanced/environment_vars
+   advanced/performance
+   advanced/cross_platform
+   advanced/custom_formatters
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Additional Information
+   
+   changelog
+   contributing
+   license
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+.. ======================================================================
+.. FILE 7: installation.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+Installation
+============
+
+Requirements
+------------
+
+- Python 3.6 or higher
+- Operating System: Windows 10+, Linux, or macOS
+- Terminal with TTY support (for automatic color detection)
+
+Standard Installation
+---------------------
+
+Using pip
+~~~~~~~~~
+
+The easiest way to install make_colors is using pip:
+
+.. code-block:: bash
+
+   pip install make_colors
+
+From Source
+~~~~~~~~~~~
+
+You can also install from source:
+
+.. code-block:: bash
+
+   git clone https://github.com/cumulus13/make_colors.git
+   cd make_colors
+   pip install -e .
+
+Development Installation
+------------------------
+
+For development, install with additional dependencies:
+
+.. code-block:: bash
+
+   git clone https://github.com/cumulus13/make_colors.git
+   cd make_colors
+   pip install -e ".[dev]"
+
+This installs additional tools for:
+
+- Running tests
+- Building documentation
+- Code formatting and linting
+
+Verifying Installation
+----------------------
+
+After installation, verify that make_colors is working correctly:
+
+.. code-block:: python
+
+   from make_colors import make_colors, MakeColors
+   
+   # Test basic functionality
+   print(make_colors("Installation successful!", "green"))
+   
+   # Check color support
+   if MakeColors.supports_color():
+       print(make_colors("✓ Color support detected", "lightgreen"))
+   else:
+       print("⚠ No color support detected")
+
+Platform-Specific Notes
+-----------------------
+
+Windows
+~~~~~~~
+
+On Windows 10 and later, ANSI escape sequences are supported by default. For earlier versions of Windows, you may need to:
+
+1. Use a terminal emulator that supports ANSI codes (e.g., Windows Terminal, ConEmu)
+2. Enable ANSICON environment variable
+3. Use the ``force=True`` parameter to bypass color support detection
+
+.. code-block:: python
+
+   # Force colors on older Windows systems
+   print(make_colors("Forced colors", "red", force=True))
+
+Linux/macOS
+~~~~~~~~~~~
+
+Most modern terminals on Linux and macOS support ANSI escape codes by default. No additional configuration is needed.
+
+Terminal Compatibility
+~~~~~~~~~~~~~~~~~~~~~~
+
+The following terminals are tested and confirmed to work:
+
+- **Windows**: Windows Terminal, PowerShell, CMD (Win10+), ConEmu, Cmder
+- **Linux**: GNOME Terminal, Konsole, xterm, rxvt, Terminator
+- **macOS**: Terminal.app, iTerm2, Hyper
+- **Cross-platform**: VS Code integrated terminal, PyCharm terminal
+
+Upgrading
+---------
+
+To upgrade to the latest version:
+
+.. code-block:: bash
+
+   pip install --upgrade make_colors
+
+Uninstallation
+--------------
+
+To remove make_colors:
+
+.. code-block:: bash
+
+   pip uninstall make_colors
+
+Troubleshooting
+---------------
+
+No Colors Displayed
+~~~~~~~~~~~~~~~~~~~
+
+If colors are not appearing in your terminal:
+
+1. Check if your terminal supports ANSI escape codes
+2. Verify that output is going to a TTY (not redirected to a file)
+3. Check environment variables: ``MAKE_COLORS`` should not be set to ``0``
+4. Try forcing colors with ``force=True`` parameter
+
+.. code-block:: python
+
+   # Debug color support
+   from make_colors import MakeColors
+   import sys
+   
+   print(f"TTY detected: {sys.stdout.isatty()}")
+   print(f"Color support: {MakeColors.supports_color()}")
+   print(f"Platform: {sys.platform}")
+
+Import Errors
+~~~~~~~~~~~~~
+
+If you encounter import errors:
+
+.. code-block:: bash
+
+   # Reinstall the package
+   pip uninstall make_colors
+   pip install make_colors
+   
+   # Or install from source
+   pip install git+https://github.com/cumulus13/make_colors.git
+
+Next Steps
+----------
+
+Now that you have make_colors installed, proceed to:
+
+- :doc:`quickstart` - Learn basic usage
+- :doc:`usage` - Explore all features
+- :doc:`examples` - See practical examples
+
+.. ======================================================================
+.. FILE 8: license.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+License
+=======
+
+MIT License
+
+Copyright (c) 2024 Hadi Cahyadi (cumulus13)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+.. ======================================================================
+.. FILE 9: quickstart.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+Quick Start Guide
+=================
+
+This guide will help you get started with make_colors in just a few minutes.
+
+5-Minute Tutorial
+-----------------
+
+Basic Text Coloring
+~~~~~~~~~~~~~~~~~~~
+
+The simplest way to add color to your text:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   # Red text
+   print(make_colors("Error occurred!", "red"))
+   
+   # Green text
+   print(make_colors("Success!", "green"))
+   
+   # Blue text
+   print(make_colors("Information", "blue"))
+
+Output:
+
+.. image:: _static/images/basic_colors.png
+   :alt: Basic colored text output
+
+Adding Background Colors
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use the ``background`` parameter or ``on_`` prefix:
+
+.. code-block:: python
+
+   # Yellow text on black background
+   print(make_colors("Warning!", "yellow", "on_black"))
+   
+   # White text on red background
+   print(make_colors("Critical!", "white", "on_red"))
+   
+   # Black text on yellow background
+   print(make_colors("Attention", "black", "on_yellow"))
+
+Using Color Abbreviations
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Save time with short color codes:
+
+.. code-block:: python
+
+   # 'r' = red, 'g' = green, 'bl' = blue
+   print(make_colors("Quick red", "r"))
+   print(make_colors("Quick green", "g"))
+   print(make_colors("Quick blue", "bl"))
+   
+   # Light colors
+   print(make_colors("Light blue", "lb"))
+   print(make_colors("Light red", "lr"))
+
+Common abbreviations:
+
+- ``r`` / ``rd`` / ``re`` → red
+- ``g`` / ``gr`` / ``ge`` → green
+- ``bl`` → blue
+- ``y`` / ``ye`` / ``yl`` → yellow
+- ``m`` / ``mg`` / ``ma`` → magenta
+- ``c`` / ``cy`` / ``cn`` → cyan
+- ``w`` / ``wh`` → white
+- ``b`` / ``bk`` → black
+- ``lb``, ``lr``, ``lg``, etc. → light variants
+
+Combined Format
+~~~~~~~~~~~~~~~
+
+Specify both colors in one string:
+
+.. code-block:: python
+
+   # Using hyphen separator
+   print(make_colors("Text", "red-yellow"))      # Red on yellow
+   
+   # Using underscore separator
+   print(make_colors("Text", "blue_white"))      # Blue on white
+   
+   # Using comma separator
+   print(make_colors("Text", "green,black"))     # Green on black
+   
+   # With abbreviations
+   print(make_colors("Text", "r-y"))             # Red on yellow
+   print(make_colors("Text", "lb_b"))            # Light blue on black
+
+Attribute Detection (NEW!)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Include text attributes directly in the color string:
+
+.. code-block:: python
+
+   # Bold text
+   print(make_colors("Bold red", "bold-red"))
+   
+   # Italic text
+   print(make_colors("Italic blue", "italic-blue"))
+   
+   # Underlined text
+   print(make_colors("Underlined green", "underline-green"))
+   
+   # Multiple attributes
+   print(make_colors("Bold italic", "bold-italic-yellow"))
+   
+   # With background
+   print(make_colors("Styled", "bold-white-red"))
+
+Supported attributes:
+
+- ``bold`` - Bold/bright text
+- ``dim`` - Dimmed text
+- ``italic`` - Italic text (if supported)
+- ``underline`` - Underlined text
+- ``blink`` - Blinking text
+- ``reverse`` - Reverse video
+- ``strikethrough`` / ``strike`` - Strikethrough text
+
+Rich Markup Format
+~~~~~~~~~~~~~~~~~~
+
+Use intuitive markup syntax:
+
+.. code-block:: python
+
+   # Basic markup
+   print(make_colors("[red]Error![/]"))
+   print(make_colors("[green]Success![/]"))
+   
+   # With background
+   print(make_colors("[white on red]Alert![/]"))
+   print(make_colors("[black on yellow]Warning![/]"))
+   
+   # With styles
+   print(make_colors("[bold red]Critical Error![/]"))
+   print(make_colors("[italic blue]Information[/]"))
+   print(make_colors("[underline green]Link[/]"))
+   
+   # Multiple sections
+   print(make_colors("[red]Error:[/] [white]Connection failed[/]"))
+
+Convenience Functions
+~~~~~~~~~~~~~~~~~~~~~
+
+Use shorter function names:
+
+.. code-block:: python
+
+   from make_colors import make, print
+   
+   # Short form
+   text = make("Hello", "bold-green")
+   
+   # Direct printing (overrides built-in print)
+   print("Success!", "green")
+   print("Warning!", "yellow", "on_black")
+
+Magic Functions (Dynamic)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Call color functions directly:
+
+.. code-block:: python
+
+   from make_colors import red, green, blue
+   from make_colors import w_bl, r_y, lb_b
+   
+   # Full names
+   print(red("Error message"))
+   print(green("Success message"))
+   print(blue("Information"))
+   
+   # Combinations
+   print(w_bl("White on blue"))       # white_on_blue
+   print(r_y("Red on yellow"))        # red_on_yellow
+   print(lb_b("Light blue on black")) # lightblue_on_black
+
+Practical Examples
+------------------
+
+Log Levels
+~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   def log(level, message):
+       colors = {
+           'DEBUG': ('cyan', None),
+           'INFO': ('blue', None),
+           'WARNING': ('yellow', 'on_black'),
+           'ERROR': ('red', 'on_white'),
+           'CRITICAL': ('white', 'on_red')
+       }
+       fg, bg = colors.get(level, ('white', None))
+       level_colored = make_colors(f"[{level}]", fg, bg)
+       print(f"{level_colored} {message}")
+   
+   log('DEBUG', 'Database connection established')
+   log('INFO', 'User logged in')
+   log('WARNING', 'High memory usage')
+   log('ERROR', 'Failed to save file')
+   log('CRITICAL', 'System shutdown required')
+
+Status Indicators
+~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   def status(state, message):
+       symbols = {
+           'success': ('✓', 'lightgreen'),
+           'warning': ('⚠', 'lightyellow'),
+           'error': ('✗', 'lightred'),
+           'running': ('●', 'lightblue'),
+           'pending': ('◐', 'lightmagenta')
+       }
+       symbol, color = symbols.get(state, ('?', 'white'))
+       print(make_colors(f"{symbol} {message}", color))
+   
+   status('success', 'All tests passed')
+   status('warning', 'Deprecated function used')
+   status('error', 'Connection timeout')
+   status('running', 'Processing data...')
+   status('pending', 'Waiting for response')
+
+Progress Indication
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   import time
+   
+   def show_progress(percentage):
+       filled = int(percentage / 5)
+       bar = '█' * filled + '░' * (20 - filled)
+       
+       if percentage < 30:
+           color = 'red'
+       elif percentage < 70:
+           color = 'yellow'
+       else:
+           color = 'green'
+       
+       return make_colors(f"[{bar}] {percentage}%", color)
+   
+   # Simulate progress
+   for i in range(0, 101, 10):
+       print(f"\r{show_progress(i)}", end='', flush=True)
+       time.sleep(0.5)
+   print()  # New line after completion
+
+Environment Variables
+---------------------
+
+Control color behavior globally:
+
+.. code-block:: bash
+
+   # Disable all colors
+   export MAKE_COLORS=0
+   
+   # Force colors (ignore terminal detection)
+   export MAKE_COLORS_FORCE=1
+   
+   # Enable debug output
+   export MAKE_COLORS_DEBUG=1
+
+In Python:
+
+.. code-block:: python
+
+   import os
+   
+   # Disable colors programmatically
+   os.environ['MAKE_COLORS'] = '0'
+   
+   # Or force colors
+   os.environ['MAKE_COLORS_FORCE'] = '1'
+
+Next Steps
+----------
+
+Now that you know the basics, explore:
+
+- :doc:`usage` - Detailed feature documentation
+- :doc:`examples` - More practical examples
+- :doc:`rich_markup` - Advanced markup syntax
+- :doc:`api/main_functions` - Complete API reference
+
+.. ======================================================================
+.. FILE 10: rich_markup.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+Rich Markup Format
+==================
+
+make_colors supports Rich console markup format, providing an intuitive way to style text using inline tags.
+
+Basic Syntax
+------------
+
+The general syntax for Rich markup is:
+
+.. code-block:: text
+
+   [style]text[/]
+
+Where ``style`` can be:
+
+- A color name: ``[red]text[/]``
+- A color combination: ``[white on blue]text[/]``  
+- A style with color: ``[bold red]text[/]``
+- A complete style: ``[bold white on blue]text[/]``
+
+Color Tags
+----------
+
+Single Color
+~~~~~~~~~~~~
+
+Apply a foreground color to text:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   print(make_colors("[red]Error message[/]"))
+   print(make_colors("[green]Success message[/]"))
+   print(make_colors("[blue]Information[/]"))
+   print(make_colors("[yellow]Warning[/]"))
+
+**Output:**
+
+.. image:: _static/images/rich_single_color.png
+   :alt: Single color output
+
+Color Combinations
+~~~~~~~~~~~~~~~~~~
+
+Specify both foreground and background colors:
+
+.. code-block:: python
+
+   print(make_colors("[white on red]Critical Alert[/]"))
+   print(make_colors("[black on yellow]Warning[/]"))
+   print(make_colors("[blue on white]Information[/]"))
+   print(make_colors("[green on black]Success[/]"))
+
+The ``on`` keyword separates foreground and background colors.
+
+Supported Colors
+~~~~~~~~~~~~~~~~
+
+**Standard Colors:**
+
+- ``black``, ``red``, ``green``, ``yellow``
+- ``blue``, ``magenta``, ``cyan``, ``white``
+
+**Light Colors:**
+
+- ``lightblack`` / ``lightgrey``
+- ``lightred``, ``lightgreen``, ``lightyellow``
+- ``lightblue``, ``lightmagenta``, ``lightcyan``, ``lightwhite``
+
+Style Tags
+----------
+
+Text Attributes
+~~~~~~~~~~~~~~~
+
+Apply text styling attributes:
+
+.. code-block:: python
+
+   print(make_colors("[bold]Bold text[/]"))
+   print(make_colors("[italic]Italic text[/]"))
+   print(make_colors("[underline]Underlined text[/]"))
+   print(make_colors("[dim]Dimmed text[/]"))
+   print(make_colors("[strikethrough]Strikethrough text[/]"))
+   print(make_colors("[blink]Blinking text[/]"))
+   print(make_colors("[reverse]Reverse video[/]"))
+
+Combining Styles with Colors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can combine text styles with colors:
+
+.. code-block:: python
+
+   # Style + Color
+   print(make_colors("[bold red]Bold red text[/]"))
+   print(make_colors("[italic blue]Italic blue text[/]"))
+   print(make_colors("[underline green]Underlined green[/]"))
+   
+   # Style + Color + Background
+   print(make_colors("[bold white on red]Bold white on red[/]"))
+   print(make_colors("[italic black on yellow]Italic warning[/]"))
+
+**Note:** The style keyword must come before color specifications.
+
+Multiple Sections
+-----------------
+
+Basic Multiple Tags
+~~~~~~~~~~~~~~~~~~~
+
+Use multiple markup sections in a single string:
+
+.. code-block:: python
+
+   text = "[red]Error:[/] [white]File not found[/]"
+   print(make_colors(text))
+   
+   log = "[blue]INFO:[/] [green]Operation completed successfully[/]"
+   print(make_colors(log))
+
+Complex Combinations
+~~~~~~~~~~~~~~~~~~~~
+
+Create complex, multi-styled messages:
+
+.. code-block:: python
+
+   # Log entry with multiple styles
+   log_entry = (
+       "[bold white on blue][INFO][/] "
+       "[cyan]2024-01-15 10:30:45[/] "
+       "[white]User[/] "
+       "[yellow]admin[/] "
+       "[white]logged in from[/] "
+       "[green]192.168.1.100[/]"
+   )
+   print(make_colors(log_entry))
+   
+   # Error message with details
+   error = (
+       "[bold white on red][ERROR][/] "
+       "[lightred]Connection failed:[/] "
+       "[white]Unable to connect to database at[/] "
+       "[cyan]localhost:5432[/]"
+   )
+   print(make_colors(error))
+
+Practical Examples
+------------------
+
+Log Levels
+~~~~~~~~~~
+
+.. code-block:: python
+
+   def log_message(level, message):
+       templates = {
+           'DEBUG': "[bold cyan][DEBUG][/] [white]{message}[/]",
+           'INFO': "[bold blue][INFO][/] [white]{message}[/]",
+           'SUCCESS': "[bold green][SUCCESS][/] [white]{message}[/]",
+           'WARNING': "[bold yellow on black][WARNING][/] [lightyellow]{message}[/]",
+           'ERROR': "[bold white on red][ERROR][/] [lightred]{message}[/]",
+           'CRITICAL': "[bold white on red][CRITICAL][/] [bold white on red]{message}[/]",
+       }
+       
+       template = templates.get(level, "[white]{message}[/]")
+       print(make_colors(template.format(message=message)))
+   
+   log_message('DEBUG', 'Variable x = 42')
+   log_message('INFO', 'Server started on port 8000')
+   log_message('SUCCESS', 'Database migration completed')
+   log_message('WARNING', 'Deprecated function used')
+   log_message('ERROR', 'Failed to parse configuration file')
+   log_message('CRITICAL', 'Out of memory - shutting down')
+
+Status Messages
+~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   def show_status(status, message):
+       statuses = {
+           'running': "[bold lightblue]●[/] [white]{msg}[/]",
+           'success': "[bold lightgreen]✓[/] [green]{msg}[/]",
+           'failed': "[bold lightred]✗[/] [red]{msg}[/]",
+           'warning': "[bold lightyellow]⚠[/] [yellow]{msg}[/]",
+           'pending': "[bold lightmagenta]◐[/] [magenta]{msg}[/]",
+       }
+       
+       template = statuses.get(status, "[white]{msg}[/]")
+       print(make_colors(template.format(msg=message)))
+   
+   show_status('running', 'Processing data...')
+   show_status('success', 'File uploaded successfully')
+   show_status('failed', 'Authentication failed')
+   show_status('warning', 'Low disk space')
+   show_status('pending', 'Waiting for approval')
+
+Highlighted Code
+~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   def show_code(code_type, code):
+       if code_type == 'python':
+           # Simulate Python syntax highlighting
+           code = (
+               f"[blue]def[/] [yellow]{code['function']}[/]"
+               f"([cyan]{code['params']}[/]):\n"
+               f"    [blue]return[/] [green]{code['return']}[/]"
+           )
+       
+       print(make_colors(code))
+   
+   show_code('python', {
+       'function': 'calculate',
+       'params': 'x, y',
+       'return': 'x + y'
+   })
+
+UI Elements
+~~~~~~~~~~~
+
+.. code-block:: python
+
+   def show_menu():
+       menu = """
+   [bold white on blue]═══════════════════════════════════[/]
+   [bold white on blue]         APPLICATION MENU          [/]
+   [bold white on blue]═══════════════════════════════════[/]
+   
+   [bold yellow][1][/] [white]Start Application[/]
+   [bold yellow][2][/] [white]Settings[/]
+   [bold yellow][3][/] [white]Help[/]
+   [bold yellow][q][/] [white]Quit[/]
+   
+   [bold white on blue]═══════════════════════════════════[/]
+       """
+       print(make_colors(menu))
+   
+   show_menu()
+
+Tables with Rich Markup
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   def show_table():
+       table = """
+   [bold white on blue]┌─────────────┬────────┬──────────────┐[/]
+   [bold white on blue]│    Name     │  Age   │    Status    │[/]
+   [bold white on blue]├─────────────┼────────┼──────────────┤[/]
+   [cyan]│ Alice       │ 30     │[/] [green]Active[/]       [cyan]│[/]
+   [cyan]│ Bob         │ 25     │[/] [red]Inactive[/]     [cyan]│[/]
+   [cyan]│ Charlie     │ 35     │[/] [green]Active[/]       [cyan]│[/]
+   [bold white on blue]└─────────────┴────────┴──────────────┘[/]
+       """
+       print(make_colors(table))
+   
+   show_table()
+
+Nesting and Escaping
+--------------------
+
+Limitations
+~~~~~~~~~~~
+
+Rich markup in make_colors does **not** support nested tags:
+
+.. code-block:: python
+
+   # ❌ This will NOT work as expected:
+   print(make_colors("[red]Outer [blue]inner[/] text[/]"))
+   
+   # ✓ Instead, use separate tags:
+   text = "[red]Outer[/] [blue]inner[/] [red]text[/]"
+   print(make_colors(text))
+
+Escaping Square Brackets
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you need to display literal square brackets:
+
+.. code-block:: python
+
+   # To display "[INFO]" without markup:
+   print(make_colors("\\[INFO\\] Message here"))
+   
+   # Or use it within markup:
+   print(make_colors("[blue]\\[System\\][/] Status: OK"))
+
+Comparison with Traditional Format
+-----------------------------------
+
+Rich Markup vs Traditional
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These produce identical output:
+
+.. code-block:: python
+
+   # Traditional format
+   text1 = make_colors("Error!", "red", "on_yellow")
+   
+   # Rich markup
+   text2 = make_colors("[red on yellow]Error![/]")
+   
+   # Attribute detection
+   text3 = make_colors("Error!", "red-yellow")
+   
+   print(text1 == text2 == text3)  # True (visually identical)
+
+When to Use Each Format
+~~~~~~~~~~~~~~~~~~~~~~~
+
+**Use Rich Markup when:**
+
+- Building complex formatted strings
+- Creating templates with variable styling
+- Working with user-facing messages
+- Wanting intuitive, readable code
+
+**Use Traditional Format when:**
+
+- Need programmatic color selection
+- Building dynamic color schemes
+- Performance is critical (slightly faster)
+- Working with abbreviations extensively
+
+**Use Attribute Detection when:**
+
+- Want compact, readable code
+- Prefer inline style specification
+- Need quick prototyping
+- Working with simple color combinations
+
+Best Practices
+--------------
+
+1. **Consistency**
+
+   Choose one format style and stick with it throughout your project:
+
+   .. code-block:: python
+
+      # Good - consistent rich markup
+      print(make_colors("[red]Error[/]"))
+      print(make_colors("[green]Success[/]"))
+      
+      # Or consistent traditional
+      print(make_colors("Error", "red"))
+      print(make_colors("Success", "green"))
+
+2. **Readability**
+
+   Use rich markup for complex strings:
+
+   .. code-block:: python
+
+      # More readable
+      msg = "[bold red]Error:[/] [white]File not found:[/] [cyan]config.ini[/]"
+      
+      # Less readable  
+      msg = (make_colors("Error:", "bold-red") + " " +
+             make_colors("File not found:", "white") + " " +
+             make_colors("config.ini", "cyan"))
+
+3. **Performance**
+
+   For high-frequency operations, consider caching:
+
+   .. code-block:: python
+
+      # Cache formatted strings
+      ERROR_PREFIX = make_colors("[bold red][ERROR][/] ")
+      
+      def log_error(message):
+          print(ERROR_PREFIX + message)
+
+4. **Template Strings**
+
+   Use rich markup in templates:
+
+   .. code-block:: python
+
+      LOG_TEMPLATE = "[bold {level_color}][{level}][/] [white]{message}[/]"
+      
+      def log(level, message, level_color):
+          formatted = LOG_TEMPLATE.format(
+              level=level,
+              level_color=level_color,
+              message=message
+          )
+          print(make_colors(formatted))
+
+See Also
+--------
+
+- :doc:`usage` - Complete usage guide
+- :doc:`examples` - Practical examples
+- :doc:`attributes` - Attribute detection guide
+- :doc:`api/main_functions` - API reference
+
+.. ======================================================================
+.. FILE 11: usage.rst
+.. Combined at: 2025-11-24 14:24:45
+.. ======================================================================
+
+Complete Usage Guide
+====================
+
+This comprehensive guide covers all features and usage patterns of make_colors.
+
+Basic Usage
+-----------
+
+Importing
+~~~~~~~~~
+
+.. code-block:: python
+
+   # Import main function
+   from make_colors import make_colors
+   
+   # Import convenience functions
+   from make_colors import make, print
+   
+   # Import utility functions
+   from make_colors import colorize, Color
+   
+   # Import classes
+   from make_colors import MakeColors, Console
+
+Simple Text Coloring
+~~~~~~~~~~~~~~~~~~~~~
+
+The most basic usage applies a single color:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   # Red text
+   red_text = make_colors("Error occurred!", "red")
+   print(red_text)
+   
+   # Green text
+   green_text = make_colors("Success!", "green")
+   print(green_text)
+   
+   # Blue text
+   blue_text = make_colors("Information", "blue")
+   print(blue_text)
+
+Color Specifications
+--------------------
+
+Full Color Names
+~~~~~~~~~~~~~~~~
+
+Use complete color names for clarity:
+
+.. code-block:: python
+
+   # Standard colors
+   print(make_colors("Text", "black"))
+   print(make_colors("Text", "red"))
+   print(make_colors("Text", "green"))
+   print(make_colors("Text", "yellow"))
+   print(make_colors("Text", "blue"))
+   print(make_colors("Text", "magenta"))
+   print(make_colors("Text", "cyan"))
+   print(make_colors("Text", "white"))
+   
+   # Light colors
+   print(make_colors("Text", "lightred"))
+   print(make_colors("Text", "lightgreen"))
+   print(make_colors("Text", "lightblue"))
+   print(make_colors("Text", "lightyellow"))
+   print(make_colors("Text", "lightmagenta"))
+   print(make_colors("Text", "lightcyan"))
+   print(make_colors("Text", "lightwhite"))
+   print(make_colors("Text", "lightblack"))  # or lightgrey
+
+Color Abbreviations
+~~~~~~~~~~~~~~~~~~~
+
+Use short codes for quick development:
+
+.. code-block:: python
+
+   # Basic abbreviations
+   print(make_colors("Text", "r"))     # red
+   print(make_colors("Text", "g"))     # green
+   print(make_colors("Text", "bl"))    # blue
+   print(make_colors("Text", "y"))     # yellow
+   print(make_colors("Text", "m"))     # magenta
+   print(make_colors("Text", "c"))     # cyan
+   print(make_colors("Text", "w"))     # white
+   print(make_colors("Text", "b"))     # black
+   
+   # Light color abbreviations
+   print(make_colors("Text", "lr"))    # lightred
+   print(make_colors("Text", "lg"))    # lightgreen
+   print(make_colors("Text", "lb"))    # lightblue
+   print(make_colors("Text", "ly"))    # lightyellow
+   print(make_colors("Text", "lm"))    # lightmagenta
+   print(make_colors("Text", "lc"))    # lightcyan
+   print(make_colors("Text", "lw"))    # lightwhite
+   print(make_colors("Text", "lk"))    # lightblack
+
+Complete Abbreviation Reference:
+
+========== =========== =================
+Abbrev     Full Name   Alternative
+========== =========== =================
+b, bk      black       
+r, rd, re  red         
+g, gr, ge  green       
+y, ye, yl  yellow      
+bl         blue        
+m, mg, ma  magenta     
+c, cy, cn  cyan        
+w, wh      white       wi, wt
+lb         lightblue   
+lr         lightred    
+lg         lightgreen  
+ly         lightyellow 
+lm         lightmagenta
+lc         lightcyan   
+lw         lightwhite  
+lk         lightblack  lightgrey
+========== =========== =================
+
+Background Colors
+-----------------
+
+Using on_ Prefix
+~~~~~~~~~~~~~~~~
+
+The most explicit way to specify backgrounds:
+
+.. code-block:: python
+
+   print(make_colors("Text", "red", "on_yellow"))
+   print(make_colors("Text", "white", "on_blue"))
+   print(make_colors("Text", "black", "on_white"))
+   print(make_colors("Text", "green", "on_black"))
+
+Without on_ Prefix
+~~~~~~~~~~~~~~~~~~
+
+Background can be specified directly:
+
+.. code-block:: python
+
+   print(make_colors("Text", "red", "yellow"))
+   print(make_colors("Text", "white", "blue"))
+   print(make_colors("Text", "black", "white"))
+
+Combined Format
+~~~~~~~~~~~~~~~
+
+Specify both in one string:
+
+.. code-block:: python
+
+   # Using hyphen
+   print(make_colors("Text", "red-yellow"))
+   print(make_colors("Text", "white-blue"))
+   
+   # Using underscore
+   print(make_colors("Text", "red_yellow"))
+   print(make_colors("Text", "white_blue"))
+   
+   # Using comma
+   print(make_colors("Text", "red,yellow"))
+   print(make_colors("Text", "white,blue"))
+   
+   # With abbreviations
+   print(make_colors("Text", "r-y"))    # red on yellow
+   print(make_colors("Text", "w_bl"))   # white on blue
+   print(make_colors("Text", "g,b"))    # green on black
+
+Text Attributes
+---------------
+
+Basic Attributes
+~~~~~~~~~~~~~~~~
+
+Apply text styling:
+
+.. code-block:: python
+
+   # Bold text
+   print(make_colors("Bold", "red", attrs=["bold"]))
+   
+   # Italic text
+   print(make_colors("Italic", "blue", attrs=["italic"]))
+   
+   # Underlined text
+   print(make_colors("Underline", "green", attrs=["underline"]))
+   
+   # Dimmed text
+   print(make_colors("Dim", "white", attrs=["dim"]))
+   
+   # Strikethrough text
+   print(make_colors("Strike", "red", attrs=["strikethrough"]))
+   
+   # Blinking text (if supported)
+   print(make_colors("Blink", "yellow", attrs=["blink"]))
+   
+   # Reverse video
+   print(make_colors("Reverse", "white", attrs=["reverse"]))
+
+Multiple Attributes
+~~~~~~~~~~~~~~~~~~~
+
+Combine multiple attributes:
+
+.. code-block:: python
+
+   # Bold and underlined
+   print(make_colors("Text", "red", attrs=["bold", "underline"]))
+   
+   # Italic and dim
+   print(make_colors("Text", "blue", attrs=["italic", "dim"]))
+   
+   # Bold, italic, and underlined
+   print(make_colors("Text", "green", attrs=["bold", "italic", "underline"]))
+
+Attribute Detection (NEW!)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Include attributes directly in color strings:
+
+.. code-block:: python
+
+   # Simple attribute detection
+   print(make_colors("Bold red", "bold-red"))
+   print(make_colors("Italic blue", "italic-blue"))
+   print(make_colors("Underline green", "underline-green"))
+   
+   # With background
+   print(make_colors("Bold white on red", "bold-white-red"))
+   print(make_colors("Italic blue on yellow", "italic-blue-yellow"))
+   
+   # Multiple attributes
+   print(make_colors("Text", "bold-italic-red"))
+   print(make_colors("Text", "underline-dim-green"))
+   print(make_colors("Text", "bold-underline-italic-yellow"))
+   
+   # Any separator works
+   print(make_colors("Text", "bold_red"))
+   print(make_colors("Text", "italic,blue"))
+   
+   # Order doesn't matter
+   print(make_colors("Text", "red-bold"))      # Same as bold-red
+   print(make_colors("Text", "yellow-bold-italic"))  # Same as bold-italic-yellow
+
+Supported Attributes:
+
+============== =============================================
+Attribute      Description
+============== =============================================
+bold           Bold or increased intensity
+dim            Dimmed or decreased intensity
+italic         Italic text (terminal dependent)
+underline      Underlined text
+blink          Blinking text (rarely supported)
+reverse        Swap foreground and background colors
+strikethrough  Strikethrough text
+strike         Alias for strikethrough
+============== =============================================
+
+Rich Markup Format
+------------------
+
+Basic Markup
+~~~~~~~~~~~~
+
+Use intuitive markup tags:
+
+.. code-block:: python
+
+   # Single color
+   print(make_colors("[red]Error message[/]"))
+   print(make_colors("[green]Success message[/]"))
+   
+   # Color combination
+   print(make_colors("[white on red]Alert![/]"))
+   print(make_colors("[black on yellow]Warning![/]"))
+   
+   # With styles
+   print(make_colors("[bold red]Important![/]"))
+   print(make_colors("[italic blue]Note[/]"))
+   print(make_colors("[underline green]Link[/]"))
+
+Multiple Sections
+~~~~~~~~~~~~~~~~~
+
+Combine multiple markup sections:
+
+.. code-block:: python
+
+   # Log entry
+   log = "[bold blue][INFO][/] [white]User logged in[/]"
+   print(make_colors(log))
+   
+   # Error message
+   error = "[bold red][ERROR][/] [lightred]Connection failed:[/] [cyan]timeout[/]"
+   print(make_colors(error))
+   
+   # Complex message
+   msg = (
+       "[bold white on blue][SYSTEM][/] "
+       "[cyan]2024-01-15 10:30:45[/] "
+       "[green]Process completed[/]"
+   )
+   print(make_colors(msg))
+
+See :doc:`rich_markup` for complete Rich markup documentation.
+
+Function Variants
+-----------------
+
+make_colors()
+~~~~~~~~~~~~~
+
+The main function:
+
+.. code-block:: python
+
+   from make_colors import make_colors
+   
+   text = make_colors("Hello", "red", "on_yellow")
+   print(text)
+
+make_color()
+~~~~~~~~~~~~
+
+Alias for make_colors():
+
+.. code-block:: python
+
+   from make_colors import make_color
+   
+   text = make_color("Hello", "red", "on_yellow")
+   print(text)
+
+make()
+~~~~~~
+
+Short form:
+
+.. code-block:: python
+
+   from make_colors import make
+   
+   text = make("Hello", "red", "on_yellow")
+   print(text)
+
+print()
+~~~~~~~
+
+Direct printing:
+
+.. code-block:: python
+
+   from make_colors import print
+   
+   print("Hello", "red", "on_yellow")
+   # No need to store in variable
+
+colorize()
+~~~~~~~~~~
+
+Alternative interface:
+
+.. code-block:: python
+
+   from make_colors import colorize
+   
+   # Using data parameter
+   print(colorize("Hello", "red-yellow"))
+   
+   # Using fg/bg parameters
+   print(colorize("Hello", fg="red", bg="yellow"))
+   
+   # With attributes
+   print(colorize("Hello", fg="red", attrs=["bold"]))
+
+Dynamic Functions
+-----------------
+
+Foreground Only
+~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import red, green, blue, yellow
+   from make_colors import lightred, lightgreen, lightblue
+   
+   print(red("Error message"))
+   print(green("Success"))
+   print(blue("Information"))
+   print(yellow("Warning"))
+   print(lightred("Light red text"))
+
+Combinations
+~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import red_on_yellow, white_on_blue
+   from make_colors import green_on_black, black_on_white
+   
+   print(red_on_yellow("Warning!"))
+   print(white_on_blue("Information"))
+   print(green_on_black("Success"))
+
+Abbreviated Functions
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import r, g, bl, y
+   from make_colors import w_bl, r_y, g_b
+   
+   print(r("Red"))
+   print(g("Green"))
+   print(bl("Blue"))
+   print(w_bl("White on blue"))
+   print(r_y("Red on yellow"))
+
+Classes
+-------
+
+MakeColors Class
+~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import MakeColors
+   
+   mc = MakeColors()
+   
+   # Check color support
+   if mc.supports_color():
+       print("Terminal supports colors")
+   
+   # Use colored method
+   text = mc.colored("Hello", "red", "on_yellow")
+   print(text)
+   
+   # Rich colored method
+   text = mc.rich_colored("Hello", "red", "yellow", "bold")
+   print(text)
+
+Color Class
+~~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import Color
+   
+   # Create color instance
+   red_color = Color("red", "yellow")
+   
+   # Format text
+   text = red_color.format("Hello World")
+   print(text)
+   
+   # Or call directly
+   text = red_color("Hello World")
+   print(text)
+   
+   # Get ANSI code
+   print(red_color.COLOR)  # Returns ANSI escape sequence
+
+Console Class
+~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from make_colors import Console
+   
+   # Direct printing
+   Console.print("Success!", "green")
+   Console.print("Error!", "red", "on_white")
+   Console.print("Warning!", "yellow", "on_black", ["bold"])
+
+Environment Variables
+---------------------
+
+MAKE_COLORS
+~~~~~~~~~~~
+
+Control color output globally:
+
+.. code-block:: bash
+
+   # Disable colors
+   export MAKE_COLORS=0
+   
+   # Enable colors (default)
+   export MAKE_COLORS=1
+
+.. code-block:: python
+
+   import os
+   
+   # Disable colors in Python
+   os.environ['MAKE_COLORS'] = '0'
+   
+   # Now all colors are disabled
+   print(make_colors("Text", "red"))  # Returns plain text
+
+MAKE_COLORS_FORCE
+~~~~~~~~~~~~~~~~~
+
+Force color output:
+
+.. code-block:: bash
+
+   # Force colors even in non-TTY
+   export MAKE_COLORS_FORCE=1
+
+.. code-block:: python
+
+   # Or use force parameter
+   text = make_colors("Text", "red", force=True)
+   
+   # Useful for file output
+   with open("log.txt", "w") as f:
+       f.write(make_colors("Log entry", "blue", force=True))
+
+MAKE_COLORS_DEBUG
+~~~~~~~~~~~~~~~~~
+
+Enable debug output:
+
+.. code-block:: bash
+
+   export MAKE_COLORS_DEBUG=1
+
+.. code-block:: python
+
+   # Debug mode shows parsing details
+   import os
+   os.environ['MAKE_COLORS_DEBUG'] = '1'
+   
+   print(make_colors("Text", "bold-red-yellow"))
+   # Shows: parsing details, detected attributes, etc.
+
+Advanced Patterns
+-----------------
+
+Conditional Coloring
+~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   def status_color(code):
+       if code == 200:
+           return make_colors(f"Status: {code}", "green")
+       elif code == 404:
+           return make_colors(f"Status: {code}", "yellow")
+       else:
+           return make_colors(f"Status: {code}", "red")
+   
+   print(status_color(200))
+   print(status_color(404))
+   print(status_color(500))
+
+Color Mapping
+~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   SEVERITY_COLORS = {
+       'debug': 'cyan',
+       'info': 'blue',
+       'warning': 'yellow',
+       'error': 'red',
+       'critical': 'white-red'
+   }
+   
+   def log(severity, message):
+       color = SEVERITY_COLORS.get(severity, 'white')
+       print(make_colors(f"[{severity.upper()}] {message}", color))
+   
+   log('debug', 'Variable x = 42')
+   log('info', 'Server started')
+   log('error', 'Connection failed')
+
+Template Formatting
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   LOG_TEMPLATE = "[{level_color}][{level}][/] [{time_color}]{time}[/] {message}"
+   
+   def format_log(level, time, message):
+       colors = {
+           'DEBUG': ('cyan', 'lightblack'),
+           'INFO': ('blue', 'lightblue'),
+           'ERROR': ('red', 'lightred'),
+       }
+       
+       level_color, time_color = colors.get(level, ('white', 'white'))
+       
+       formatted = LOG_TEMPLATE.format(
+           level_color=level_color,
+           time_color=time_color,
+           level=level,
+           time=time,
+           message=message
+       )
+       
+       return make_colors(formatted)
+   
+   print(format_log('INFO', '10:30:45', 'User logged in'))
+
+Decorator Pattern
+~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   def colorize_output(color):
+       """Decorator to colorize function output."""
+       def decorator(func):
+           def wrapper(*args, **kwargs):
+               result = func(*args, **kwargs)
+               return make_colors(str(result), color)
+           return wrapper
+       return decorator
+   
+   @colorize_output('green')
+   def success_message():
+       return "Operation completed successfully"
+   
+   @colorize_output('red')
+   def error_message():
+       return "An error occurred"
+   
+   print(success_message())
+   print(error_message())
+
+Context Manager
+~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   class ColorContext:
+       """Context manager for temporary color settings."""
+       
+       def __init__(self, foreground, background=None):
+           self.fg = foreground
+           self.bg = background
+           self.original_env = os.environ.get('MAKE_COLORS')
+       
+       def __enter__(self):
+           self.color_func = lambda text: make_colors(text, self.fg, self.bg)
+           return self.color_func
+       
+       def __exit__(self, *args):
+           if self.original_env:
+               os.environ['MAKE_COLORS'] = self.original_env
+   
+   # Usage
+   with ColorContext('red', 'yellow') as color:
+       print(color("This is colored"))
+       print(color("This too"))
+
+Best Practices
+--------------
+
+1. **Consistency**
+
+   Stick to one coloring style throughout your project.
+
+2. **Accessibility**
+
+   Don't rely solely on colors to convey information.
+
+3. **Terminal Detection**
+
+   Let make_colors handle terminal detection automatically.
+
+4. **Performance**
+
+   Cache frequently used colored strings.
+
+5. **Testing**
+
+   Disable colors in tests with ``MAKE_COLORS=0``.
+
+6. **Documentation**
+
+   Document your color scheme for other developers.
+
+See Also
+--------
+
+- :doc:`examples` - Practical examples
+- :doc:`rich_markup` - Rich markup guide
+- :doc:`api/main_functions` - Complete API reference
+- :doc:`advanced/environment_vars` - Environment variables guide

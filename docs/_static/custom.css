@@ -1,0 +1,395 @@
+/* Custom CSS for make_colors documentation - Enhanced Dark Theme */
+
+/* ===== Color Palette ===== */
+:root {
+    --primary-bg: #1e1e1e;
+    --secondary-bg: #252526;
+    --tertiary-bg: #2d2d30;
+    --accent-color: #007acc;
+    --accent-hover: #1a8cd8;
+    --text-color: #d4d4d4;
+    --text-muted: #858585;
+    --border-color: #3e3e42;
+    --code-bg: #1e1e1e;
+    --code-border: #404040;
+    --link-color: #4fc3f7;
+    --link-hover: #81d4fa;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --error-color: #f44336;
+    --info-color: #2196f3;
+}
+
+/* ===== Base Styles ===== */
+body {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-color) !important;
+}
+
+/* ===== Sidebar ===== */
+.wy-side-nav-search {
+    background-color: var(--secondary-bg) !important;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.wy-side-nav-search input[type=text] {
+    background-color: var(--tertiary-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+}
+
+.wy-side-nav-search input[type=text]:focus {
+    border-color: var(--accent-color) !important;
+}
+
+.wy-menu-vertical a {
+    color: var(--text-color) !important;
+}
+
+.wy-menu-vertical a:hover {
+    background-color: var(--tertiary-bg) !important;
+    color: var(--link-hover) !important;
+}
+
+.wy-menu-vertical li.current {
+    background-color: var(--tertiary-bg) !important;
+}
+
+.wy-menu-vertical li.current a {
+    border-right: 3px solid var(--accent-color) !important;
+    background-color: var(--secondary-bg) !important;
+}
+
+.wy-menu-vertical li.toctree-l1.current > a {
+    border-bottom: none !important;
+    border-top: none !important;
+}
+
+.wy-side-scroll {
+    background-color: var(--secondary-bg) !important;
+}
+
+/* ===== Navigation ===== */
+.wy-nav-content-wrap {
+    background-color: var(--primary-bg) !important;
+}
+
+.wy-nav-content {
+    background-color: var(--primary-bg) !important;
+    max-width: 1200px !important;
+}
+
+.wy-breadcrumbs {
+    background-color: var(--secondary-bg) !important;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px !important;
+}
+
+.wy-breadcrumbs li {
+    color: var(--text-muted) !important;
+}
+
+.wy-breadcrumbs a {
+    color: var(--link-color) !important;
+}
+
+/* ===== Content Area ===== */
+.rst-content {
+    color: var(--text-color) !important;
+}
+
+.rst-content .section {
+    padding: 24px;
+}
+
+/* ===== Headers ===== */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+h1 {
+    font-size: 2.5em !important;
+    margin-bottom: 0.5em !important;
+    border-bottom: 2px solid var(--accent-color) !important;
+    padding-bottom: 0.3em !important;
+}
+
+h2 {
+    font-size: 2em !important;
+    margin-top: 1.5em !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding-bottom: 0.2em !important;
+}
+
+h3 {
+    font-size: 1.5em !important;
+    margin-top: 1.2em !important;
+    color: var(--link-color) !important;
+}
+
+/* ===== Links ===== */
+a {
+    color: var(--link-color) !important;
+    text-decoration: none !important;
+}
+
+a:hover {
+    color: var(--link-hover) !important;
+    text-decoration: underline !important;
+}
+
+a:visited {
+    color: #9575cd !important;
+}
+
+/* ===== Code Blocks ===== */
+.rst-content pre,
+.rst-content div[class^='highlight'] {
+    background-color: var(--code-bg) !important;
+    border: 1px solid var(--code-border) !important;
+    border-radius: 4px !important;
+    padding: 16px !important;
+    margin: 16px 0 !important;
+}
+
+.rst-content code,
+.rst-content tt {
+    background-color: var(--tertiary-bg) !important;
+    color: #ce9178 !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 2px 6px !important;
+    border-radius: 3px !important;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    font-size: 0.9em !important;
+}
+
+.highlight {
+    background-color: var(--code-bg) !important;
+}
+
+.highlight .c { color: #6a9955 !important; } /* Comment */
+.highlight .k { color: #569cd6 !important; } /* Keyword */
+.highlight .s { color: #ce9178 !important; } /* String */
+.highlight .n { color: #9cdcfe !important; } /* Name */
+.highlight .nf { color: #dcdcaa !important; } /* Function */
+.highlight .nc { color: #4ec9b0 !important; } /* Class */
+.highlight .nb { color: #4ec9b0 !important; } /* Built-in */
+.highlight .mi { color: #b5cea8 !important; } /* Number */
+.highlight .o { color: #d4d4d4 !important; } /* Operator */
+
+/* ===== Admonitions ===== */
+.rst-content .admonition {
+    background-color: var(--secondary-bg) !important;
+    border-left: 4px solid var(--accent-color) !important;
+    padding: 16px !important;
+    margin: 16px 0 !important;
+    border-radius: 4px !important;
+}
+
+.rst-content .admonition-title {
+    background-color: var(--tertiary-bg) !important;
+    color: var(--text-color) !important;
+    font-weight: bold !important;
+    margin: -16px -16px 12px -16px !important;
+    padding: 12px 16px !important;
+    border-radius: 4px 4px 0 0 !important;
+}
+
+.rst-content .note {
+    border-left-color: var(--info-color) !important;
+}
+
+.rst-content .warning {
+    border-left-color: var(--warning-color) !important;
+}
+
+.rst-content .danger,
+.rst-content .error {
+    border-left-color: var(--error-color) !important;
+}
+
+.rst-content .tip,
+.rst-content .hint {
+    border-left-color: var(--success-color) !important;
+}
+
+/* ===== Tables ===== */
+.rst-content table {
+    border-collapse: collapse !important;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--secondary-bg) !important;
+}
+
+.rst-content table thead {
+    background-color: var(--tertiary-bg) !important;
+}
+
+.rst-content table th {
+    background-color: var(--tertiary-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 12px !important;
+    font-weight: bold !important;
+}
+
+.rst-content table td {
+    border: 1px solid var(--border-color) !important;
+    padding: 10px !important;
+    color: var(--text-color) !important;
+}
+
+.rst-content table tbody tr:hover {
+    background-color: var(--tertiary-bg) !important;
+}
+
+/* ===== Lists ===== */
+.rst-content ul,
+.rst-content ol {
+    color: var(--text-color) !important;
+}
+
+.rst-content li {
+    margin: 8px 0 !important;
+}
+
+/* ===== API Documentation ===== */
+.rst-content dl {
+    background-color: var(--secondary-bg) !important;
+    border-left: 3px solid var(--accent-color) !important;
+    padding: 16px !important;
+    margin: 16px 0 !important;
+    border-radius: 4px !important;
+}
+
+.rst-content dl dt {
+    background-color: var(--tertiary-bg) !important;
+    color: var(--link-color) !important;
+    padding: 8px 12px !important;
+    margin-bottom: 8px !important;
+    border-radius: 3px !important;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+}
+
+.rst-content dl dd {
+    margin-left: 24px !important;
+    margin-top: 8px !important;
+}
+
+/* ===== Buttons ===== */
+.btn {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 8px 16px !important;
+    transition: background-color 0.3s ease !important;
+}
+
+.btn:hover {
+    background-color: var(--accent-hover) !important;
+}
+
+/* ===== Footer ===== */
+.rst-footer-buttons {
+    border-top: 1px solid var(--border-color) !important;
+    padding-top: 24px !important;
+    margin-top: 48px !important;
+}
+
+.rst-versions {
+    background-color: var(--secondary-bg) !important;
+    border-top: 2px solid var(--accent-color) !important;
+}
+
+/* ===== Copy Button ===== */
+.copybtn {
+    background-color: var(--tertiary-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.copybtn:hover {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+}
+
+/* ===== Search ===== */
+.wy-side-nav-search > div.version {
+    color: var(--text-muted) !important;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--secondary-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--tertiary-bg);
+    border-radius: 6px;
+    border: 2px solid var(--secondary-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+}
+
+/* ===== Mobile Responsiveness ===== */
+@media screen and (max-width: 768px) {
+    .wy-nav-content {
+        padding: 16px !important;
+    }
+    
+    .rst-content .section {
+        padding: 16px !important;
+    }
+}
+
+/* ===== Badges ===== */
+.rst-content .badge {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+    padding: 4px 8px !important;
+    border-radius: 12px !important;
+    font-size: 0.85em !important;
+    font-weight: bold !important;
+    margin-left: 8px !important;
+}
+
+/* ===== Version Badge ===== */
+.wy-side-nav-search .version {
+    color: var(--text-muted) !important;
+    font-size: 0.9em !important;
+}
+
+/* ===== Highlighted Text ===== */
+.rst-content mark {
+    background-color: rgba(255, 235, 59, 0.3) !important;
+    color: var(--text-color) !important;
+    padding: 2px 4px !important;
+    border-radius: 2px !important;
+}
+
+/* ===== Images ===== */
+.rst-content img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 4px !important;
+    border: 1px solid var(--border-color) !important;
+    margin: 16px 0 !important;
+}
+
+/* ===== Special Note Boxes ===== */
+.rst-content .versionmodified {
+    background-color: var(--tertiary-bg) !important;
+    border-left: 4px solid var(--info-color) !important;
+    padding: 8px 12px !important;
+    margin: 12px 0 !important;
+    border-radius: 4px !important;
+    font-style: italic !important;
+}

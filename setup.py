@@ -120,7 +120,7 @@ setup(
     version=get_version(),
     url="https://github.com/cumulus13/make_colors",
     project_urls={
-        "Documentation": "https://github.com/cumulus13/make_colors",
+        "Documentation": "https://make_colors.readthedocs.io",
         "Code": "https://github.com/cumulus13/make_colors",
         "Issue tracker": "https://github.com/cumulus13/make_colors/issues",
     },
@@ -148,7 +148,6 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
