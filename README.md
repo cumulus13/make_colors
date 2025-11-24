@@ -362,6 +362,13 @@ Supported styles:
 
 * **bold**, **italic**, **underline**, **dim**, **blink**, **reverse**, **strikethrough**
 
+```python
+# using console
+from make_colors import Console
+console = Console()
+console.print("[white on red]This is Example ERROR ![/]")
+```
+
 ---
 
 ## 🖥️ Platform Support
