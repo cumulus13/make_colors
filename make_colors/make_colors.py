@@ -965,7 +965,7 @@ def make(string, foreground='white', background=None, attrs=[], force=False):
     """
     return make_colors(string, foreground, background, attrs, force)
 
-def print(string, foreground='white', background=None, attrs=[], force=False):
+def print(string, foreground='white', background=None, attrs=[], force=False, **kwargs):
     """Print colored text directly to the console with automatic formatting.
 
     This convenience function combines color formatting and printing in a single call.
@@ -1019,7 +1019,7 @@ def print(string, foreground='white', background=None, attrs=[], force=False):
         - Respects all environment variable settings
         - Original print function is preserved as _print for internal use
     """
-    _print(make_colors(string, foreground, background, attrs, force))
+    _print(make_colors(string, foreground, background, attrs, force), **kwargs)
 
 def print_exception(*args, **kwargs):
     import traceback
@@ -1120,6 +1120,23 @@ class Console:
         """
         _print(make_colors(string, foreground, background, attrs, force))
 
+class Confirm:
+
+    def __init__(self, question = None):
+        self.question = question or "Are you sure:"
+        Confirm.ask(question)
+
+    @classmethod
+    def ask(cls, question=None):
+        question = question or "Are you sure:"
+        print(question, end=' ')
+        q = input()
+        if q:
+            if q.lower() in ['1', 'yes', 'ok', 'y']:
+                return True
+            else:
+                return q
+        return False
 
 # === GENERATE SEMUA FUNGSI ===
 _all_names = []
@@ -1447,7 +1464,7 @@ class SimpleCustomHelpFormatter(argparse.RawDescriptionHelpFormatter):
         
         return '\n'.join(result)
 
-__all__ = _all_names + ['MakeColors', 'MakeColor', 'color_map', 'getSort', 'parse_rich_markup', 'make_colors', 'make_color', "Console", 'make', 'colorize', "Color", "Colors", "MakeColorsHelpFormatter", "SimpleCustomHelpFormatter", "print"]
+__all__ = _all_names + ['MakeColors', 'MakeColor', 'color_map', 'getSort', 'parse_rich_markup', 'make_colors', 'make_color', "Console", "Confirm", 'make', 'colorize', "Color", "Colors", "MakeColorsHelpFormatter", "SimpleCustomHelpFormatter", "print"]
 
 
 # Example usage and testing section

@@ -1,6 +1,6 @@
 # 🎨 make\_colors
 
-A simple, powerful, and cross-platform Python library for adding colors, styles, and rich markup support to your terminal output. Optimized for **Windows 10+**, Linux, and macOS.
+A simple, powerful, and cross-platform Python library for adding colors, styles, rich markup support, and **beautiful tables** to your terminal output. Optimized for **Windows 10+**, Linux, and macOS.
 
 [![Python Version](https://img.shields.io/badge/python-2.7%2B%20%7C%203.x-blue.svg)](https://python.org)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](https://github.com)
@@ -13,7 +13,8 @@ A simple, powerful, and cross-platform Python library for adding colors, styles,
 * [🚀 Quick Start](#-quick-start)
 * [🎨 Color Reference](#-color-reference)
 * [💡 Usage Examples](#-usage-examples)
-* [🌍 Environment Variables](#-environment-variables)
+* [📊 Table Module](#-table-module)
+* [🌐 Environment Variables](#-environment-variables)
 * [📚 API Reference](#-api-reference)
 * [🖋 Rich Markup Support](#-rich-markup-support)
 * [🖥️ Platform Support](#-platform-support)
@@ -21,7 +22,7 @@ A simple, powerful, and cross-platform Python library for adding colors, styles,
 * [🎯 Best Practices](#-best-practices)
 * [⚠️ Error Handling](#️-error-handling)
 * [📊 Performance](#-performance)
-* [📑 Quick Reference](#-quick-reference)
+* [🔑 Quick Reference](#-quick-reference)
 * [🤝 Contributing](#-contributing)
 * [📄 License](#-license)
 * [👨‍💻 Author](#-author)
@@ -32,15 +33,16 @@ A simple, powerful, and cross-platform Python library for adding colors, styles,
 
 ## ✨ Features
 
-* 🖥️ **Cross-platform support** – Works on Windows, Linux, and macOS
-* 🎯 **Windows 10+ optimized** – Uses native ANSI processing on Windows Console
-* 🌈 **Rich color palette** – 16 standard colors with light variants
-* 📝 **Simple syntax** – Full names, abbreviations, and combined formats
-* 🔧 **Flexible formatting** – Foreground, background, and text attributes
-* 🖋 **Rich markup** – Parse and render `[red]Error[/]` or `[bold white on red]CRITICAL[/]`
-* 🚀 **Lightweight** – Zero external dependencies
-* 🎛️ **Environment control** – Enable/disable colors globally with env vars
-* 🛡 **Error handling** – Graceful fallbacks when unsupported colors are used
+* 🖥️ **Cross-platform support** — Works on Windows, Linux, and macOS
+* 🎯 **Windows 10+ optimized** — Uses native ANSI processing on Windows Console
+* 🌈 **Rich color palette** — 16 standard colors with light variants
+* 📝 **Simple syntax** — Full names, abbreviations, and combined formats
+* 🔧 **Flexible formatting** — Foreground, background, and text attributes
+* 🖋 **Rich markup** — Parse and render `[red]Error[/]` or `[bold white on red]CRITICAL[/]`
+* 📊 **Table support** — Create beautiful colored tables with Rich-style API
+* 🚀 **Lightweight** — Zero external dependencies
+* 🎛️ **Environment control** — Enable/disable colors globally with env vars
+* 🛡 **Error handling** — Graceful fallbacks when unsupported colors are used
 
 ---
 
@@ -70,9 +72,9 @@ print(make_colors("Quick and easy", "r", "bl"))  # red text, blue background
 print(make_colors("One-liner style", "green_yellow"))  # green text on yellow background
 
 # Rich markup
-print(make_colors("[bold white on red] CRITICAL [/]") )
+print(make_colors("[bold white on red] CRITICAL [/]"))
 
-# import all 
+# Import all 
 from make_colors import *
 
 print(bl("Im Blue"))
@@ -81,6 +83,19 @@ print(color("White on Red"))
 color = Color('white', 'red')
 print(color("TEST"))
 
+# Create beautiful tables
+from make_colors.table import Table
+
+table = Table(title="Server Status", title_style="bold cyan")
+table.add_column("Service", style="bold")
+table.add_column("Status", style="green")
+table.add_column("Uptime", style="yellow")
+
+table.add_row("Web Server", "✓ Running", "15d 6h")
+table.add_row("Database", "✓ Running", "15d 6h")
+table.add_row("Cache", "⚠ Warning", "2d 3h", style="yellow")
+
+print(table.draw())
 ```
 
 ---
@@ -147,7 +162,6 @@ print(make_colors("Debug info", "cyan-black"))
 # Using comma separator
 print(make_colors("Critical message", "white,blue"))
 print(make_colors("Alert info", "w,r"))
-
 ```
 
 ### Advanced Examples
@@ -249,7 +263,262 @@ choice = create_menu()
 
 ---
 
-## 🌍 Environment Variables
+## 📊 Table Module
+
+Create beautiful, colored tables with a Rich-style API!
+
+### Quick Start
+
+```python
+from make_colors.table import Table
+
+# Rich-style API
+table = Table(title="[bold cyan]Package Info[/]", header_style="bold white")
+table.add_column("Package", style="bold")
+table.add_column("Version", style="green")
+table.add_column("Status", style="yellow")
+
+table.add_row("numpy", "1.21.0", "✓ OK")
+table.add_row("pandas", "1.3.0", "⚠ Update", style="bold yellow")
+table.add_row("requests", "2.26.0", "✓ OK")
+
+print(table.draw())
+```
+
+### Table Features
+
+* ✅ **Rich-style API** - `add_column()` and `add_row()`
+* ✅ **Traditional API** - Compatible with classic table libraries
+* ✅ **Rich markup support** - Use `[color]text[/]` in headers and cells
+* ✅ **Column styling** - Set colors per column
+* ✅ **Row styling** - Set colors per row
+* ✅ **Flexible alignment** - Left, center, right alignment
+* ✅ **Data type formatting** - Auto-format numbers, floats, text
+* ✅ **All make_colors formats** - Abbreviations, full names, attributes
+
+### Table API Reference
+
+#### Creating a Table
+
+```python
+from make_colors.table import Table
+
+# With title and styles
+table = Table(
+    title="My Report",
+    title_style="bold cyan",      # or "bold-cyan"
+    header_style="bold white",    # or "bold-white"
+    max_width=80                  # 0 for unlimited
+)
+```
+
+#### Rich-style API
+
+```python
+# Add columns with styling
+table.add_column("Name", style="bold", align="l")
+table.add_column("Price", style="green", align="r", dtype="f")
+table.add_column("Stock", style="cyan", align="r", dtype="i")
+table.add_column("Status", style="yellow", align="c")
+
+# Add rows with optional styling
+table.add_row("Product A", 99.99, 150, "Available")
+table.add_row("Product B", 149.99, 0, "Out of Stock", style="bold red")
+table.add_row("Product C", 199.99, 75, "Low Stock", style="yellow")
+```
+
+#### Traditional API
+
+```python
+# Set column properties
+table.set_cols_align(["l", "r", "r", "c"])
+table.set_cols_valign(["t", "m", "b", "t"])
+table.set_cols_dtype(["t", "f", "i", "t"])
+table.set_cols_width([20, 10, 10, 15])
+
+# Set column colors (NEW!)
+table.set_cols_color(["bold", "green", "cyan", "yellow"])
+table.set_cols_color(["y", "r", "c", "g"])  # Using abbreviations
+
+# Set row colors (NEW!)
+table.set_rows_color(["green", "yellow", "bold-red", None])
+
+# Set header
+table.header(["Name", "Price", "Stock", "Status"])
+
+# Add rows
+table.add_row("Product A", 99.99, 150, "Available")
+table.add_row("Product B", 149.99, 0, "Out of Stock")
+```
+
+### Rich Markup in Tables
+
+Tables support Rich markup in headers, cells, and titles:
+
+```python
+# Rich markup in title
+table = Table(title="[bold cyan]Server Status[/]")
+
+# Rich markup in column headers
+table.add_column("[bold white]Service[/]")
+table.add_column("[white on blue]Status[/]")
+table.add_column("[white on green]Uptime[/]")
+
+# Rich markup in cells
+table.add_row("[bold]Web Server[/]", "✓ Running", "15d 6h")
+```
+
+### Table Examples
+
+#### Example 1: Package Version Checker
+
+```python
+from make_colors.table import Table
+
+table = Table(title="Package Version Checker", title_style="bold cyan")
+table.add_column("Package", style="bold")
+table.add_column("Installed", style="cyan")
+table.add_column("Required", style="magenta")
+table.add_column("Status", style="yellow")
+
+table.add_row("numpy", "1.21.0", "1.20.0", "✓ OK")
+table.add_row("pandas", "1.3.0", "1.4.0", "⚠ Update", style="bold yellow")
+table.add_row("requests", "2.26.0", "2.26.0", "✓ OK")
+table.add_row("flask", "1.1.0", "2.0.0", "✗ Old", style="bold red")
+
+print(table.draw())
+```
+
+#### Example 2: System Monitor with Column Colors
+
+```python
+table = Table()
+table.set_cols_align(["l", "c", "r", "r"])
+table.set_cols_color(["bold-white", "cyan", "yellow", "magenta"])
+table.header(["Service", "Status", "CPU %", "Memory %"])
+
+table.add_row("Web Server", "✓ Running", "45.2", "62.8")
+table.add_row("Database", "✓ Running", "78.5", "85.3")
+table.add_row("Cache", "⚠ Warning", "92.1", "95.7")
+
+print(table.draw())
+```
+
+#### Example 3: Status-based Row Coloring
+
+```python
+table = Table(title="Task Status", title_style="bold-cyan")
+table.header(["Task", "Status", "Progress", "Priority"])
+
+table.add_row("Deploy to Production", "✓ Complete", "100%", "High")
+table.add_row("Code Review", "⚠ In Progress", "75%", "Medium")
+table.add_row("Write Tests", "● Pending", "0%", "High")
+table.add_row("Fix Bug #123", "✗ Blocked", "30%", "Critical")
+
+# Color rows based on status
+table.set_rows_color([
+    "bold-green",    # Complete
+    "bold-yellow",   # In Progress
+    "dim",           # Pending
+    "bold-red"       # Blocked
+])
+
+print(table.draw())
+```
+
+#### Example 4: Rich Markup Headers
+
+```python
+table = Table(title="[bold magenta]Sales Dashboard[/]")
+table.add_column("[bold white]Product[/]", align="l")
+table.add_column("[bold green]Revenue[/]", align="r", dtype="f")
+table.add_column("[white on blue]Units Sold[/]", align="r", dtype="i")
+table.add_column("[bold yellow on black]Trend[/]", align="c")
+
+table.add_row("Widget A", 125000.50, 1234, "📈 Up")
+table.add_row("Widget B", 89000.25, 890, "📉 Down", style="dim")
+table.add_row("Widget C", 250000.00, 2500, "🔥 Hot", style="bold-green")
+
+print(table.draw())
+```
+
+#### Example 5: Alternating Row Colors (Zebra Striping)
+
+```python
+table = Table(title="User List", title_style="bold-cyan")
+table.header(["ID", "Username", "Email", "Status"])
+
+users = [
+    ["001", "john_doe", "john@example.com", "Active"],
+    ["002", "jane_smith", "jane@example.com", "Active"],
+    ["003", "bob_wilson", "bob@example.com", "Inactive"],
+    ["004", "alice_brown", "alice@example.com", "Active"],
+    ["005", "charlie_davis", "charlie@example.com", "Active"],
+]
+
+for user in users:
+    table.add_row(*user)
+
+# Alternate between dim and normal
+table.set_rows_color(["dim", None, "dim", None, "dim"])
+
+print(table.draw())
+```
+
+### Table Styling Options
+
+#### Alignment
+
+```python
+# Horizontal: "l" (left), "c" (center), "r" (right)
+table.set_cols_align(["l", "c", "r"])
+
+# Vertical: "t" (top), "m" (middle), "b" (bottom)
+table.set_cols_valign(["t", "m", "b"])
+```
+
+#### Data Types
+
+```python
+# "a" (auto), "t" (text), "f" (float), "e" (exponential), "i" (integer)
+table.set_cols_dtype(["t", "f", "i", "a"])
+```
+
+#### Border Styles
+
+```python
+# Customize border characters
+table.set_chars(['-', '|', '+', '='])  # [horiz, vert, corner, header]
+
+# Control decorations
+table.set_deco(Table.BORDER | Table.HEADER)  # Border + header line only
+table.set_deco(Table.VLINES | Table.HLINES)  # Only lines, no border
+```
+
+### Color Format Support in Tables
+
+All make_colors formats are supported:
+
+```python
+# Full names
+table.set_cols_color(["red", "green", "blue"])
+
+# Abbreviations
+table.set_cols_color(["r", "g", "bl"])
+
+# With attributes
+table.set_cols_color(["bold-red", "italic-cyan", "dim-yellow"])
+
+# With background
+table.set_cols_color(["white-red", "black-yellow", "green-black"])
+
+# Mixed formats
+table.set_cols_color(["bold-white", "r", "italic-cyan", "lb-b"])
+```
+
+---
+
+## 🌐 Environment Variables
 
 | Variable            | Values              | Description                        |
 | ------------------- | ------------------- | ---------------------------------- |
@@ -279,14 +548,14 @@ print(make_colors("Forced colors", "green"))  # Always colored
 
 Main function to colorize strings with ANSI or Rich markup.
 
-* `string` *(str)* – Input text, supports Rich markup like `[red]Error[/]`
-* `foreground` *(str)* – Foreground color
-* `background` *(str|None)* – Background color
-* `attrs` *(list)* – List of attributes: `bold`, `underline`, `italic`, etc.
-* `force` *(bool)* – Force enable colors
+* `string` *(str)* — Input text, supports Rich markup like `[red]Error[/]`
+* `foreground` *(str)* — Foreground color
+* `background` *(str|None)* — Background color
+* `attrs` *(list)* — List of attributes: `bold`, `underline`, `italic`, etc.
+* `force` *(bool)* — Force enable colors
 
 **Returns:**
-- `str` (Colorized string with ANSI string escape codes)
+- `str` (Colorized string with ANSI escape codes)
 
 ---
 
@@ -345,8 +614,8 @@ else:
 
 ### Exceptions
 
-* `MakeColorsError` – Raised when invalid colors are used
-* `MakeColorsWarning` – Non-critical fallback warnings
+* `MakeColorsError` — Raised when invalid colors are used
+* `MakeColorsWarning` — Non-critical fallback warnings
 
 ---
 
@@ -363,7 +632,7 @@ Supported styles:
 * **bold**, **italic**, **underline**, **dim**, **blink**, **reverse**, **strikethrough**
 
 ```python
-# using console
+# Using console
 from make_colors import Console
 console = Console()
 console.print("[white on red]This is Example ERROR ![/]")
@@ -372,7 +641,6 @@ console.print("[white on red]This is Example ERROR ![/]")
 ---
 
 ## 🖥️ Platform Support
-
 
 ### Windows
 * **Windows 10+**       ✅ (full ANSI support)
@@ -388,6 +656,7 @@ console.print("[white on red]This is Example ERROR ![/]")
 - **Terminal.app**:    ✅ Full support
 - **iTerm2**:          ✅ Excellent support
 - **Other terminals**: ✅  Generally well supported
+
 ---
 
 ## 🛠️ Development & Testing
@@ -436,6 +705,25 @@ def test_all_colors():
 # Run the test
 test_all_colors()
 
+### Testing Tables
+
+```python
+from make_colors.table import Table
+
+# Test basic table
+table = Table()
+table.header(["Column 1", "Column 2", "Column 3"])
+table.add_row("Data 1", "Data 2", "Data 3")
+print(table.draw())
+
+# Test colored table
+table = Table(title="Test Table", title_style="bold cyan")
+table.add_column("Name", style="bold")
+table.add_column("Value", style="green")
+table.add_row("Test", "Success", style="green")
+print(table.draw())
+```
+
 ---
 
 ## 🎯 Best Practices
@@ -445,6 +733,7 @@ test_all_colors()
 3. **Use env vars for CI/CD or logging**
 4. **Choose contrasting colors** for better readability
 5. **Test on multiple OSes/terminals/platforms** to ensure compatibility
+6. **Use tables for structured data** - Tables make data more readable and professional
 
 ```python
 from make_colors import make_colors, MakeColors
@@ -461,27 +750,26 @@ safe_print("This works everywhere!", "green")
 ```
 
 ## 🧙 Magick
+
 ```python
-    
-    from make_colors import *
+from make_colors import *
 
-    print(red("Error!"))
-    print(bl("Im Blue"))
-    print(green_on_black("Success"))
+print(red("Error!"))
+print(bl("Im Blue"))
+print(green_on_black("Success"))
 
-    # Abbreviation
-    print(w_bl("White on Blue"))      # white on blue
-    print(r_w("Red on White"))        # red on white
-    print(g_b("Green on Black"))      # green on black
-    print(lb_b("Light Blue on Black"))
+# Abbreviation
+print(w_bl("White on Blue"))      # white on blue
+print(r_w("Red on White"))        # red on white
+print(g_b("Green on Black"))      # green on black
+print(lb_b("Light Blue on Black"))
 
-    color = Colors('red', 'white')
-    print(color("White on Red"))
-    color = Color('white', 'red')
-    print(color("TEST"))
+color = Colors('red', 'white')
+print(color("White on Red"))
+color = Color('white', 'red')
+print(color("TEST"))
 
-
-    # Try and see what happened 👏 😄
+# Try and see what happened 👍 😄
 ```
 
 ---
@@ -504,19 +792,28 @@ except Exception as e:
 
 ## 📊 Performance
 
-* Traditional call: \~0.00001s per render
-* Rich markup parsing: slightly slower (\~+10–15%)
-* Suitable for **high-frequency logging**
+* Traditional call: ~0.00001s per render
+* Rich markup parsing: slightly slower (~+10–15%)
+* Table rendering: Optimized for large datasets
+* Suitable for **high-frequency logging** and **data visualization**
 
 ---
 
-## 📑 Quick Reference
+## 🔑 Quick Reference
 
+### Colors
 * ✅ Single color: `[red]text[/]`
 * ✅ With background: `[white on red]text[/]`
 * ✅ With style: `[bold green]text[/]`
 * ✅ Combined: `[bold white on red]ALERT[/]`
 * ✅ Multiple tags: `[cyan]Info[/] [red]Error[/]`
+
+### Tables
+* ✅ Rich-style: `table.add_column("Name", style="bold")`
+* ✅ Rich markup: `table.add_column("[white on blue]Status[/]")`
+* ✅ Column colors: `table.set_cols_color(["r", "g", "b"])`
+* ✅ Row colors: `table.set_rows_color(["green", "yellow", "red"])`
+* ✅ Styling rows: `table.add_row(..., style="bold red")`
 
 ---
 

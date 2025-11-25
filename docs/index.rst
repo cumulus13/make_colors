@@ -1,7 +1,7 @@
 Welcome to make_colors Documentation
 ====================================
 
-**make_colors** is a comprehensive Python module for creating colored text output in terminals with support for both ANSI escape codes and Rich console formatting. It provides cross-platform compatibility for Windows 10+, Linux, and macOS terminals.
+**make_colors** is a comprehensive Python module for creating colored text output in terminals with support for both ANSI escape codes, Rich console formatting, and beautiful tables. It provides cross-platform compatibility for Windows 10+, Linux, and macOS terminals.
 
 .. image:: https://img.shields.io/badge/python-3.6+-blue.svg
    :target: https://www.python.org/downloads/
@@ -26,6 +26,17 @@ Key Features
 - 📝 **Multiple Rich Markup Tags** - Complex formatting support
 - ⚙️ **Attribute Detection** - Parse attributes from color strings
 - 🔄 **Multiple Separators Support** - Use `-`, `_`, or `,` as delimiters
+- 🖥️ **Cross-platform support** — Works on Windows, Linux, and macOS
+- 🎯 **Windows 10+ optimized** — Uses native ANSI processing on Windows Console
+- 🌈 **Rich color palette** — 16 standard colors with light variants
+- 📝 **Simple syntax** — Full names, abbreviations, and combined formats
+- 🔧 **Flexible formatting** — Foreground, background, and text attributes
+- 🖋 **Rich markup** — Parse and render `[red]Error[/]` or `[bold white on red]CRITICAL[/]`
+- 📊 **Table support** — Create beautiful colored tables with Rich-style API
+- 🚀 **Lightweight** — Zero external dependencies
+- 🎛️ **Environment control** — Enable/disable colors globally with env vars
+- 🛡 **Error handling** — Graceful fallbacks when unsupported colors are used
+
 
 Quick Start
 -----------
@@ -59,6 +70,21 @@ Basic Usage
    # Attribute detection (NEW!)
    print(make_colors("Success", "bold-green"))
 
+   # Create beautiful tables
+   from make_colors.table import Table
+
+   table = Table(title="Server Status", title_style="bold cyan")
+   table.add_column("Service", style="bold")
+   table.add_column("Status", style="green")
+   table.add_column("Uptime", style="yellow")
+
+   table.add_row("Web Server", "✓ Running", "15d 6h")
+   table.add_row("Database", "✓ Running", "15d 6h")
+   table.add_row("Cache", "⚠ Warning", "2d 3h", style="yellow")
+
+   print(table.draw())
+
+
 Documentation Contents
 ----------------------
 
@@ -72,6 +98,7 @@ Documentation Contents
    examples
    rich_markup
    attributes
+   table
 
 .. toctree::
    :maxdepth: 2
