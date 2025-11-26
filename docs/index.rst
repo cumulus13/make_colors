@@ -84,6 +84,16 @@ Basic Usage
 
    print(table.draw())
 
+   from make_colors import print
+   print("[white on red]Hello RED[/]")
+   print("[white on blue]Hello[/]", end='')
+   print("[white on magenta]World![/]")
+   print("Hey Ho !", 'ly') # light yellow or bold yellow
+
+   from make_colors import print as mprint
+   mprint("[cyan]How are you ?[/]")
+   mprint("fine, nice to meed you", 'm') #magenta
+
 
 Documentation Contents
 ----------------------
