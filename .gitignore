@@ -31,3 +31,11 @@ make_colors/test_make_colors.py
 
 # Added entries (1 items)
 make_colors/test_rich_parser.py
+
+# Added entries (6 items)
+make_colors/make_colors_click.py
+make_colors/make_colors_debug.py
+make_colors/make_colors_tc.py
+make_colors/make_colors1.py
+make_colors/test1.py
+make_colors/table.py.0

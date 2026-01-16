@@ -9,3 +9,11 @@
 *.hgtags
 *dist/
 *.egg-info/
+# Added entries (7 items)
+make_colors_click.py
+make_colors_debug.py
+make_colors_tc.py
+make_colors1.py
+test1.py
+table.py.0
+test2.py
