@@ -25,6 +25,85 @@ from __future__ import print_function
 
 import os
 import sys
+import traceback
+
+tprint = None  # type: ignore
+
+# print(f"os.getenv('LOGGING')    [make_colors][A]: {os.getenv('LOGGING')}")
+# print(f"os.getenv('NO_LOGGING') [make_colors][A]: {os.getenv('NO_LOGGING')}")
+    
+# _DEBUG = str(os.getenv('MAKE_COLORS_DEBUG', '0')).lower() in ['1', 'true', 'ok', 'yes', 'on']
+LOG_LEVEL = os.getenv('LOG_LEVEL', 'EMERGENCY')
+SHOW_LOGGING = False
+
+# print(f"os.getenv('LOGGING')    [make_colors][B]: {os.getenv('LOGGING')}")
+# print(f"os.getenv('NO_LOGGING') [make_colors][B]: {os.getenv('NO_LOGGING')}")
+
+
+# if len(sys.argv) > 1 and any('--debug' == arg for arg in sys.argv):
+if len(sys.argv) > 1 and '--debug' in sys.argv[1:]:
+    print("🐞 Debug mode enabled [make_colors]")
+    os.environ["DEBUG"] = "1"
+    os.environ['LOGGING'] = "1"
+    os.environ.pop('NO_LOGGING', None)
+    os.environ['TRACEBACK'] = "1"
+    os.environ["LOGGING"] = "1"
+    LOG_LEVEL = "DEBUG"
+    SHOW_LOGGING = True
+    
+else:
+    os.environ['NO_LOGGING'] = "1"
+    SHOW_LOGGING = False
+
+if os.getenv('MAKE_COLORS_DEBUG', False) and str(os.getenv('MAKE_COLORS_DEBUG', False)).lower() not in ['1', 'true', 'ok', 'yes', 'on']:
+    os.environ.pop('NO_LOGGING', None)
+    os.environ.pop('MAKE_COLORS_DEBUG', None)
+    os.environ.pop('LOGGING', None)
+    LOG_LEVEL = "CRITICAL"
+    SHOW_LOGGING = False
+
+exceptions = ['requests']
+
+try:
+    # print(f"SHOW_LOGGING [make_colors]: {SHOW_LOGGING}")
+    # print(f"LOG_LEVEL    [make_colors]: {LOG_LEVEL}")
+    # print(f"os.getenv('LOGGING')    [make_colors][1]: {os.getenv('LOGGING')}")
+    # print(f"os.getenv('NO_LOGGING') [make_colors][1]: {os.getenv('NO_LOGGING')}")
+    
+    os.environ.pop('DEBUG', None)
+    os.environ['NO_LOGGING'] = '1'
+    os.environ.pop('LOGGING', None)
+    
+    from richcolorlog import setup_logging, print_exception as tprint  # type: ignore
+    logger = setup_logging('make_colors', exceptions=exceptions, level=LOG_LEVEL, show=SHOW_LOGGING)
+    
+    os.environ.pop('DEBUG', None)
+    os.environ['NO_LOGGING'] = '1'
+    os.environ.pop('LOGGING', None)
+    
+    # print(f"os.getenv('LOGGING')    [make_colors][2]: {os.getenv('LOGGING')}")
+    # print(f"os.getenv('NO_LOGGING') [make_colors][2]: {os.getenv('NO_LOGGING')}")
+    
+except:
+    traceback.print_exc()
+    import logging
+
+    for exc in exceptions:
+        logging.getLogger(exc).setLevel(logging.CRITICAL)
+    
+    try:
+        from .custom_logging import get_logger  # type: ignore
+    except ImportError:
+        from custom_logging import get_logger  # type: ignore
+        
+    # LOG_LEVEL = getattr(logging, LOG_LEVEL.upper(), logging.CRITICAL)
+
+    logger = get_logger('make_colors', level=getattr(logging, LOG_LEVEL.upper(), logging.CRITICAL))
+
+if not tprint:
+    def tprint(*args, **kwargs):
+        traceback.print_exc()
+
 import re
 from typing import List, Tuple, Optional, ClassVar
 import argparse
@@ -43,7 +122,6 @@ try:
     _USE_COLOR = sys.stdout.isatty()
 except:
     _USE_COLOR = True
-_DEBUG = os.getenv('MAKE_COLORS_DEBUG') in ['1', 'true', 'True']
 
 _MAIN_ABBR = {
     'black': 'b', 'blue': 'bl', 'red': 'r', 'green': 'g',
@@ -86,6 +164,11 @@ if sys.platform == 'win32':
         kernel32.GetConsoleMode(hStdOut, ctypes.byref(mode))
         mode.value |= 4  # Enable ANSI escape sequence processing
         kernel32.SetConsoleMode(hStdOut, mode)
+
+try:
+    from .hex2ansi import hex_to_ansi  # type: ignore
+except:
+    from hex2ansi import hex_to_ansi  # type: ignore
 
 class MakeColors(object):
     """A comprehensive class that provides methods for generating colored text output 
@@ -294,24 +377,65 @@ class MakeColors(object):
             'no_underline': '24',  # Reset underline
         }
 
-        # Look up colors in the banks, with fallback defaults
-        background_code = back_color_bank.get(background)
-        foreground_code = fore_color_bank.get(foreground)
-        
-        # Apply fallback defaults for invalid colors
-        if not background_code:
-            background_code = '40'  # Default to black background
-        if not foreground_code:
-            foreground_code = '37'  # Default to white foreground
-
+        foreground_code = None
+        background_code = None
         # Arrange ANSI codes
         codes = []
+        codes_attr = []
+        is_ansi = False
 
         # add attrs
         if attrs:
             for attr in attrs:
                 if attr.lower() in attr_codes:
-                    codes.append(attr_codes[attr.lower()])
+                    codes_attr.append(attr_codes[attr.lower()])
+
+        #logger.fatal(f"codes_attr: {codes_attr}")
+        #logger.emergency(f"background: {[background]}")
+        #logger.emergency(f"foreground: {[foreground]}")
+
+        if background:
+            check = background.startswith(('\033[', '[', '[')) or "[" in background
+            #logger.danger(f"background check: {check}")
+            
+            if check:
+                background = background.split("on_", 1)[1] if "on_" in background else background
+                #logger.emergency(f"background: {[background]}")
+                codes.append(background)
+                is_ansi = True
+            else:
+                background_code = back_color_bank.get(background)  # type: ignore
+
+        if foreground:
+            if foreground.startswith(('\033[', '[', '[')):
+                codes.append(foreground)
+                is_ansi = True
+            else:
+                # Look up colors in the banks, with fallback defaults
+                foreground_code = fore_color_bank.get(foreground)  # type: ignore
+        
+        #logger.critical(f"is_ansi: {is_ansi}")
+
+        #logger.alert(f"codes: {codes}")
+
+        if is_ansi:
+            # join all with ';'
+            # ansi_sequence = "".join(codes)
+            # #logger.debug(f"ansi_sequence: {[ansi_sequence]}")
+            #logger.primary(f"codes_attr: {codes_attr}")
+            styles = ";".join(codes_attr) if codes_attr else ''
+            #logger.primary(f"string: {string}")
+            #logger.primary(f"styles: {styles}")
+            #logger.primary(f"background: {background}")
+            #logger.primary(f"foreground: {foreground}")
+            # return f"{styles}{ansi_sequence}{string}[0m"    
+            return f"[{styles + ';' if styles else ''}{background[1:] if background else ''}{foreground}{string}[0m"  # type: ignore
+
+        # Apply fallback defaults for invalid colors
+        if not background_code:
+            background_code = '40'  # Default to black background
+        if not foreground_code:
+            foreground_code = '37'  # Default to white foreground
 
         # add background
         if background_code:
@@ -356,23 +480,30 @@ class MakeColors(object):
             a more intuitive interface for rich text formatting.
         """
         # Convert style to attrs list
-        style_codes = ['bold', 'dim', 'italic', 'underline', 'blink', 'reverse', 'strikethrough', 'normal', 'no_italic', 'no_underline', 'strike']
+        # style_codes = ['bold', 'dim', 'italic', 'underline', 'blink', 'reverse', 'strikethrough', 'normal', 'no_italic', 'no_underline', 'strike']
 
-        attrs = []
-        if style and style.lower() in style_codes:
-            if style == 'strike': style = 'strikethrough'
-            attrs = [style]
+        #logger.primary(f"style: {style}")
+        # attrs = []
+        # if style and style.lower() in style_codes:
+        #     if style == 'strike': style = 'strikethrough'
+        #     # attrs = [style]
+        #     attrs.append(style.lower())
         
         # Apply style prefix if specified
-        style_prefix = ''
-        if style and style.lower() in style_codes:
-            attrs = [style]
+        # style_prefix = ''
+        # if style and style.lower() in style_codes:
+        #     attrs = [style]
         
         # Convert rich format to standard format
         if bg_color and not bg_color.startswith('on_'):
             bg_color = f'on_{bg_color}'
-            
-        return self.colored(string, color or 'white', bg_color, attrs)
+        
+        #logger.emergency(f"string: {string}")
+        #logger.emergency(f"color: {[color]}")
+        #logger.emergency(f"bg_color: {bg_color}")
+        #logger.primary(f"attrs: {style}")
+
+        return self.colored(string, color or 'white', bg_color, style)
 
 class MakeColorsError(Exception):
     """Custom exception class for MakeColors-related errors.
@@ -681,7 +812,7 @@ def getSort(data=None, foreground='', background='', attrs=[]):
 def translate(*args, **kwargs):
     return getSort(*args, **kwargs)
 
-def parse_rich_markup(text):
+def parse_rich_markup1(text):
     """Parse Rich console markup format and extract styling information.
     
     This function parses Rich-style markup tags and handles multiple markup sections
@@ -693,6 +824,9 @@ def parse_rich_markup(text):
     Returns:
         list: List of tuples (content, foreground, background, style)
     """
+
+    #logger.alert(f"text: {text}")
+
     pattern = r'\[([^\]]+)\](.*?)\[/\]'
     results = []
     last_end = 0
@@ -703,31 +837,157 @@ def parse_rich_markup(text):
             results.append((text[last_end:m.start()], None, None, None))
 
         markup = m.group(1).strip().lower()
+        #logger.debug(f"markup: {markup}")
+
         content = m.group(2)
+        #logger.debug(f"content: {content}")
 
         fg, bg, style = None, None, None
         parts = markup.split()
+        #logger.alert(f"parts: {parts}")
+        #logger.debug(f"parts: {parts}")
+        parts_colors = []
+        parts_attrs = []
         styles = ['bold', 'italic', 'underline', 'dim', 'blink', 'reverse', 'strikethrough', 'strike']
         for part in parts[:]:
+            #logger.alert(f"part: {part}")
             if part in styles:
                 if part == 'strike': part = 'strikethrough'
-                style = part
-                parts.remove(part)
-                break
+                parts_attrs.append(part)
+            else:
+                parts_colors.append(part)
+                # style = part
+                # parts.remove(part)
+                # break
+        #logger.debug(f"parts: {parts}")
+        #logger.debug(f"parts_colors: {parts_colors}")
+        #logger.debug(f"parts_attrs: {parts_attrs}")
 
-        remaining = ' '.join(parts)
-        if ' on ' in remaining:
-            fg, bg = [p.strip() for p in remaining.split(' on ', 1)]
-        elif remaining:
-            fg = remaining.strip()
+        # remaining = ' '.join(parts)
+        if 'on' in parts_colors and len(parts_colors) > 2:
+            # fg, bg = [p.strip() for p in remaining.split(' on ', 1)]
+            fg = parts_colors[0]
+            bg = parts_colors[2]
 
-        results.append((content, fg, bg, style))
+            #logger.warning(f"fg: {fg}")
+            #logger.warning(f"bg: {bg}")
+        else:
+            fg = parts_colors[0]
+        
+            #logger.warning(f"fg: {fg}")
+            #logger.warning(f"bg: {bg}")
+        # elif remaining:
+        #     fg = remaining.strip()
+
+        if fg and fg.startswith("#"):
+            fg = hex_to_ansi(fg, no_prefix=True).get('fg')
+        if bg and bg.startswith("#"):
+            bg = hex_to_ansi(bg, no_prefix=True).get('bg')
+        results.append((content, fg, bg, parts_attrs))
         last_end = m.end()
 
     # plain text after the last markup
+    #logger.debug(f"last_end: {last_end}")
+    #logger.debug(f"len(text): {len(text)}")
     if last_end < len(text):
         results.append((text[last_end:], None, None, None))
 
+    #logger.debug(f"results: {results}")
+
+    return results
+
+def parse_rich_markup(text):
+    """Parse Rich markup with escaping \[ and \] support"""
+    #logger.alert(f"text (original): {text}")
+    
+    # Pre-process: change escaped brackets with placeholder
+    # \[ → placeholder for [
+    #\] → placeholder for ]
+    text_processed = text.replace(r'\[', '\x00ESCAPED_LEFT\x00').replace(r'\]', '\x00ESCAPED_RIGHT\x00')
+    
+    #logger.alert(f"text (processed): {text_processed}")
+    
+    # Search all markup with regex
+    pattern = r'\[([^\[\]]+?)\](.*?)\[/\]'
+    matches = list(re.finditer(pattern, text_processed))
+    
+    if not matches:
+        # Restore escaped brackets
+        final_text = text_processed.replace('\x00ESCAPED_LEFT\x00', '[').replace('\x00ESCAPED_RIGHT\x00', ']')
+        return [(final_text, None, None, None)]
+    
+    results = []
+    
+    for idx, m in enumerate(matches):
+        markup = m.group(1).strip().lower()
+        content = m.group(2)
+        
+        # Check if there is text before this markup?
+        if idx == 0:
+            # First match - take from start to markup
+            before = text_processed[:m.start()]
+            if before:
+                content = before + content
+        
+        # Check for text after [/] until the next or final markup
+        after_close = m.end()  # position after [/]
+        
+        if idx < len(matches) - 1:
+            # There is subsequent markup
+            next_start = matches[idx + 1].start()
+            after_text = text_processed[after_close:next_start]
+        else:
+            # Final markup
+            after_text = text_processed[after_close:]
+        
+        if after_text:
+            content = content + after_text
+        
+        # Return escaped brackets in content
+        content = content.replace('\x00ESCAPED_LEFT\x00', '[').replace('\x00ESCAPED_RIGHT\x00', ']')
+        
+        #logger.debug(f"markup: {markup}")
+        #logger.debug(f"content: {content}")
+        
+        # Parse markup
+        fg, bg = None, None
+        parts = markup.split()
+        #logger.alert(f"parts: {parts}")
+        
+        parts_colors = []
+        parts_attrs = []
+        styles = ['bold', 'italic', 'underline', 'dim', 'blink', 'reverse', 'strikethrough', 'strike']
+        
+        for part in parts:
+            #logger.alert(f"part: {part}")
+            if part in styles:
+                if part == 'strike':
+                    part = 'strikethrough'
+                parts_attrs.append(part)
+            else:
+                parts_colors.append(part)
+        
+        #logger.debug(f"parts_colors: {parts_colors}")
+        #logger.debug(f"parts_attrs: {parts_attrs}")
+        
+        if 'on' in parts_colors and len(parts_colors) > 2:
+            fg = parts_colors[0]
+            bg = parts_colors[2]
+        else:
+            if parts_colors:
+                fg = parts_colors[0]
+        
+        #logger.warning(f"fg: {fg}")
+        #logger.warning(f"bg: {bg}")
+        
+        if fg and fg.startswith("#"):
+            fg = hex_to_ansi(fg, no_prefix=True).get('fg')
+        if bg and bg.startswith("#"):
+            bg = hex_to_ansi(bg, no_prefix=True).get('bg')
+        
+        results.append((content, fg, bg, parts_attrs))
+    
+    #logger.debug(f"results: {results}")
     return results
 
 def make_colors(string, foreground='white', background=None, attrs=[], force=False):
@@ -843,33 +1103,50 @@ def make_colors(string, foreground='white', background=None, attrs=[], force=Fal
     """
     
     # Check for Rich markup format first
+    #logger.primary(f"string: {string}")
+    if not string:
+        return
     if '[' in string and ']' in string and '[/' in string:
         results = parse_rich_markup(string)
+        #logger.alert(f"results: {results}")
         if results:
             output = ""
             _coloring = MakeColors()
             for content, rich_fg, rich_bg, rich_style in results:
                 if not content:
                     continue
+                #logger.critical(f"content: {content}")
+                #logger.critical(f"rich_fg: {[rich_fg]}")
+                #logger.critical(f"rich_bg: {[rich_bg]}")
+                #logger.critical(f"rich_style: {rich_style}")
                 fg = rich_fg or foreground
                 bg = rich_bg or background
+                #logger.info(f"fg: {[fg]}")
+                #logger.info(f"bg: {[bg]}")
+                #logger.info(f"content: {content}")
                 if bg and not str(bg).startswith('on_'):
                     bg = f'on_{bg}'
                 if rich_style:
                     part = _coloring.rich_colored(content, fg, bg, rich_style)
+                    #logger.warning(f"part: {[part]}")
                 else:
                     part = _coloring.colored(content, fg, bg, attrs)
+                    #logger.warning(f"part: {[part]}")
                 output += part
             
             # Check if coloring should be applied
             if force or os.getenv('MAKE_COLORS_FORCE') == '1' or os.getenv('MAKE_COLORS_FORCE') == 'True':
+                #logger.info(f"output: {output}")
                 return output
             else:
                 if not _coloring.supports_color() or os.getenv('MAKE_COLORS') == '0':
                     # Strip ANSI codes and return plain text
                     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-                    return ansi_escape.sub('', output)
+                    output = ansi_escape.sub('', output)
+                    #logger.info(f"output: {output}")
+                    return output
                 else:
+                    #logger.info(f"output: {output}")
                     return output
 
     # Initialize attrs if not provided
@@ -1022,7 +1299,6 @@ def print(string, foreground='white', background=None, attrs=[], force=False, **
     _print(make_colors(string, foreground, background, attrs, force), **kwargs)
 
 def print_exception(*args, **kwargs):
-    import traceback
     """
     Print exception with different colors for each type, value, dan traceback.
     """
@@ -1118,7 +1394,29 @@ class Console:
             - Respects all environment variable settings
             - Original print function is preserved as _print for internal use
         """
+
+        #logger.success(f"string: {string}")
         _print(make_colors(string, foreground, background, attrs, force))
+    
+    @classmethod
+    def status(cls, message, foreground='white', background=None, attrs=[], force=False, **kwargs):
+        """Print a status message with color formatting.
+
+        This function is similar to Console.print but is specifically intended
+        for printing status messages. It applies color formatting and outputs
+        the result to stdout.
+
+        Args:
+            message (str): The status message to be printed.
+            foreground (str): Foreground text color. Defaults to 'white'.
+            background (str, optional): Background color specification. Defaults to None.
+            attrs (list): List of text attributes. Defaults to empty list.
+            force (bool): Force color output regardless of support. Defaults to False.
+
+        Returns:
+            None: This function outputs directly to console and returns None.
+        """
+        cls.print(message, foreground, background, attrs, force)
 
 class Confirm:
 
@@ -1138,14 +1436,14 @@ class Confirm:
                 return q
         return False
 
-# === GENERATE SEMUA FUNGSI ===
+# === GENERATE ALL FUNCTIONS ===
 _all_names = []
 
-# 1. Nama lengkap foreground
+# 1. The full name of the foreground
 _fg_funcs = {name: _make_ansi_func(name) for name in FG_CODES}
 _all_names.extend(FG_CODES.keys())
 
-# 2. Kombinasi lengkap: red_on_white
+# 2. Complete combination: red_on_white
 _combo_funcs = {}
 for fg in FG_CODES:
     for bg in BG_CODES:
@@ -1153,7 +1451,7 @@ for fg in FG_CODES:
         _combo_funcs[name] = _make_ansi_func(fg, bg)
         _all_names.append(name)
 
-# 3. Singkatan kombinasi: w_bl, r_w, dll
+# 3. Combination abbreviation: w_bl, r_w, dll
 _abbr_combo_funcs = {}
 for fg in FG_CODES:
     for bg in BG_CODES:
@@ -1165,7 +1463,7 @@ for fg in FG_CODES:
                 _abbr_combo_funcs[name] = _make_ansi_func(fg, bg)
                 _all_names.append(name)
 
-# 4. 🔥 SINGKATAN FOREGROUND-ONLY: bl, r, g, w, lb, dll 🔥
+# 4. 🔥 ABBREVIATION FOREGROUND-ONLY: bl, r, g, w, lb, dll 🔥
 _abbr_fg_funcs = {}
 for full_name in FG_CODES:
     abbr = _MAIN_ABBR.get(full_name)
@@ -1173,7 +1471,7 @@ for full_name in FG_CODES:
         _abbr_fg_funcs[abbr] = _make_ansi_func(full_name)
         _all_names.append(abbr)
 
-# Ekspor SEMUA ke namespace modul
+# Export ALL to the module namespace
 globals().update(_fg_funcs)
 globals().update(_combo_funcs)
 globals().update(_abbr_combo_funcs)
@@ -1463,9 +1761,6 @@ class SimpleCustomHelpFormatter(argparse.RawDescriptionHelpFormatter):
                 result.append(line)
         
         return '\n'.join(result)
-
-__all__ = _all_names + ['MakeColors', 'MakeColor', 'color_map', 'getSort', 'parse_rich_markup', 'make_colors', 'make_color', "Console", "Confirm", 'make', 'colorize', "Color", "Colors", "MakeColorsHelpFormatter", "SimpleCustomHelpFormatter", "print"]
-
 
 # Example usage and testing section
 def test():
