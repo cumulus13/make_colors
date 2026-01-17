@@ -31,3 +31,6 @@ make_colors/test_make_colors.py
 
 # Added entries (1 items)
 make_colors/test_rich_parser.py
+
+# Added entries (1 items)
+*sublime*
