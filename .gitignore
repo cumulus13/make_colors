@@ -32,6 +32,7 @@ make_colors/test_make_colors.py
 # Added entries (1 items)
 make_colors/test_rich_parser.py
 
+<<<<<<< HEAD
 # Added entries (6 items)
 make_colors/make_colors_click.py
 make_colors/make_colors_debug.py
@@ -39,3 +40,10 @@ make_colors/make_colors_tc.py
 make_colors/make_colors1.py
 make_colors/test1.py
 make_colors/table.py.0
+=======
+# Added entries (1 items)
+*sublime*
+
+# Added entries (1 items)
+*.bat
+>>>>>>> 5573c80e937d87699acbb20a6bc43d4e014e9349
