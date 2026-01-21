@@ -29,16 +29,8 @@ import traceback
 
 tprint = None  # type: ignore
 
-# print(f"os.getenv('LOGGING')    [make_colors][A]: {os.getenv('LOGGING')}")
-# print(f"os.getenv('NO_LOGGING') [make_colors][A]: {os.getenv('NO_LOGGING')}")
-    
-# _DEBUG = str(os.getenv('MAKE_COLORS_DEBUG', '0')).lower() in ['1', 'true', 'ok', 'yes', 'on']
-LOG_LEVEL = os.getenv('LOG_LEVEL', 'EMERGENCY')
+LOG_LEVEL = os.getenv('LOG_LEVEL', 'CRITICAL')
 SHOW_LOGGING = False
-
-# print(f"os.getenv('LOGGING')    [make_colors][B]: {os.getenv('LOGGING')}")
-# print(f"os.getenv('NO_LOGGING') [make_colors][B]: {os.getenv('NO_LOGGING')}")
-
 
 # if len(sys.argv) > 1 and any('--debug' == arg for arg in sys.argv):
 if len(sys.argv) > 1 and '--debug' in sys.argv[1:]:
@@ -65,10 +57,6 @@ if os.getenv('MAKE_COLORS_DEBUG', False) and str(os.getenv('MAKE_COLORS_DEBUG', 
 exceptions = ['requests']
 
 try:
-    # print(f"SHOW_LOGGING [make_colors]: {SHOW_LOGGING}")
-    # print(f"LOG_LEVEL    [make_colors]: {LOG_LEVEL}")
-    # print(f"os.getenv('LOGGING')    [make_colors][1]: {os.getenv('LOGGING')}")
-    # print(f"os.getenv('NO_LOGGING') [make_colors][1]: {os.getenv('NO_LOGGING')}")
     
     os.environ.pop('DEBUG', None)
     os.environ['NO_LOGGING'] = '1'
@@ -80,9 +68,6 @@ try:
     os.environ.pop('DEBUG', None)
     os.environ['NO_LOGGING'] = '1'
     os.environ.pop('LOGGING', None)
-    
-    # print(f"os.getenv('LOGGING')    [make_colors][2]: {os.getenv('LOGGING')}")
-    # print(f"os.getenv('NO_LOGGING') [make_colors][2]: {os.getenv('NO_LOGGING')}")
     
 except:
     traceback.print_exc()
@@ -96,8 +81,6 @@ except:
     except ImportError:
         from custom_logging import get_logger  # type: ignore
         
-    # LOG_LEVEL = getattr(logging, LOG_LEVEL.upper(), logging.CRITICAL)
-
     logger = get_logger('make_colors', level=getattr(logging, LOG_LEVEL.upper(), logging.CRITICAL))
 
 if not tprint:
