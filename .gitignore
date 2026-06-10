@@ -31,15 +31,27 @@ make_colors/test_make_colors.py
 
 # Added entries (1 items)
 make_colors/test_rich_parser.py
-
 make_colors/make_colors_click.py
 make_colors/make_colors_debug.py
 make_colors/make_colors_tc.py
 make_colors/make_colors1.py
 make_colors/test1.py
 make_colors/table.py.0
+make_colors/test_make_colors.py
 # Added entries (1 items)
 *sublime*
 
 # Added entries (1 items)
 *.bat
+
+# Added entries (1 items)
+gitignore_backup
+
+# Added entries (7 items)
+*1.py
+*_click.py
+*_debug.py
+test1.py
+test2.py
+test_make_colors.py
+*_tc.py
