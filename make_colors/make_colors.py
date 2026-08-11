@@ -56,32 +56,32 @@ if os.getenv('MAKE_COLORS_DEBUG', False) and str(os.getenv('MAKE_COLORS_DEBUG', 
 
 exceptions = ['requests']
 
-try:
+# try:
     
-    os.environ.pop('DEBUG', None)
-    os.environ['NO_LOGGING'] = '1'
-    os.environ.pop('LOGGING', None)
+#     os.environ.pop('DEBUG', None)
+#     os.environ['NO_LOGGING'] = '1'
+#     os.environ.pop('LOGGING', None)
     
-    from richcolorlog import setup_logging, print_exception as tprint  # type: ignore
-    logger = setup_logging('make_colors', exceptions=exceptions, level=LOG_LEVEL, show=SHOW_LOGGING)
+#     from richcolorlog import setup_logging, print_exception as tprint  # type: ignore
+#     logger = setup_logging('make_colors', exceptions=exceptions, level=LOG_LEVEL, show=SHOW_LOGGING)
     
-    os.environ.pop('DEBUG', None)
-    os.environ['NO_LOGGING'] = '1'
-    os.environ.pop('LOGGING', None)
+#     os.environ.pop('DEBUG', None)
+#     os.environ['NO_LOGGING'] = '1'
+#     os.environ.pop('LOGGING', None)
     
-except:
-    traceback.print_exc()
-    import logging
+# except:
+#     # traceback.print_exc()
+#     import logging
 
-    for exc in exceptions:
-        logging.getLogger(exc).setLevel(logging.CRITICAL)
+#     for exc in exceptions:
+#         logging.getLogger(exc).setLevel(logging.CRITICAL)
     
-    try:
-        from .custom_logging import get_logger  # type: ignore
-    except ImportError:
-        from custom_logging import get_logger  # type: ignore
+#     try:
+#         from .custom_logging import get_logger  # type: ignore
+#     except ImportError:
+#         from custom_logging import get_logger  # type: ignore
         
-    logger = get_logger('make_colors', level=getattr(logging, LOG_LEVEL.upper(), logging.CRITICAL))
+#     logger = get_logger('make_colors', level=getattr(logging, LOG_LEVEL.upper(), logging.CRITICAL))
 
 if not tprint:
     def tprint(*args, **kwargs):
@@ -2210,7 +2210,33 @@ def usage():
                 run_all_tests()
             except:
                 test()
-                        
+
+try:
+    
+    os.environ.pop('DEBUG', None)
+    os.environ['NO_LOGGING'] = '1'
+    os.environ.pop('LOGGING', None)
+    
+    from richcolorlog import setup_logging, print_exception as tprint  # type: ignore
+    logger = setup_logging('make_colors', exceptions=exceptions, level=LOG_LEVEL, show=SHOW_LOGGING)
+    
+    os.environ.pop('DEBUG', None)
+    os.environ['NO_LOGGING'] = '1'
+    os.environ.pop('LOGGING', None)
+    
+except:
+    traceback.print_exc()
+    import logging
+
+    for exc in exceptions:
+        logging.getLogger(exc).setLevel(logging.CRITICAL)
+    
+    try:
+        from .custom_logging import get_logger  # type: ignore
+    except ImportError:
+        from custom_logging import get_logger  # type: ignore
+        
+    logger = get_logger('make_colors', level=getattr(logging, LOG_LEVEL.upper(), logging.CRITICAL))
 
 if __name__ == '__main__':
     usage()
