@@ -80,15 +80,15 @@ def get_requirements():
     """Get requirements based on Python version."""
     requirements = []
     requirements_file = Path(__file__).parent / "requirements.txt"
-    print(f"requirements_file: {requirements_file}")
-    print(f"requirements_file.is_file(): {requirements_file.is_file()}")
+    # print(f"requirements_file: {requirements_file}")
+    # print(f"requirements_file.is_file(): {requirements_file.is_file()}")
     
     # Try to read requirements.txt if it exists
     try:
         if requirements_file.is_file():
             with open(requirements_file, "r", encoding="utf-8") as f:
                 for line in f:
-                    print(f"LINE: {line}")
+                    # print(f"LINE: {line}")
                     if line.strip() and not line.startswith("#"):
                         requirements.append(line)        
     except Exception as e:  
