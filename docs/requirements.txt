@@ -20,3 +20,5 @@ readthedocs-sphinx-ext>=2.2.0
 
 # Code formatting in docs
 pygments>=2.13.0
+
+richcolorlog

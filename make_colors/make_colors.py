@@ -2232,7 +2232,7 @@ try:
     logger = setup_logging('make_colors', exceptions=exceptions, level=LOG_LEVEL, show=SHOW_LOGGING)
     
 except:
-    traceback.print_exc()
+    # traceback.print_exc()
     import logging
 
     for exc in exceptions:
