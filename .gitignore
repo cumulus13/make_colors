@@ -55,3 +55,6 @@ test1.py
 test2.py
 test_make_colors.py
 *_tc.py
+
+# Added entries (1 items)
+setup.cfg

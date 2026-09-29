@@ -80,13 +80,18 @@ def get_requirements():
     """Get requirements based on Python version."""
     requirements = []
     requirements_file = Path(__file__).parent / "requirements.txt"
+    print(f"requirements_file: {requirements_file}")
+    print(f"requirements_file.is_file(): {requirements_file.is_file()}")
     
     # Try to read requirements.txt if it exists
     try:
         if requirements_file.is_file():
             with open(requirements_file, "r", encoding="utf-8") as f:
-                requirements.extend(line.strip() for line in f if line.strip() and not line.startswith("#"))
-    except Exception as e:
+                for line in f:
+                    print(f"LINE: {line}")
+                    if line.strip() and not line.startswith("#"):
+                        requirements.append(line)        
+    except Exception as e:  
         print(f"Warning: Could not read requirements.txt: {e}")
 
     # Only add configparser for Python 2.7
@@ -97,6 +102,7 @@ def get_requirements():
     if sys.version_info < (2, 7):
         requirements.append('argparse')
     
+    print(f"REQUIREMENTS: {requirements}")
     return requirements
 
 # Copy version file to package if it exists

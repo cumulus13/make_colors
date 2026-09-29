@@ -7,7 +7,7 @@ Tests all colors, shortcuts, and functionalities
 
 import os
 import sys
-from make_colors import make_colors, MakeColors, make_color, _print
+from make_colors import make_colors, MakeColors, make_color, print as _print
 import time
 
 def print_separator(title, char="=", width=60):
