@@ -102,7 +102,7 @@ def get_requirements():
     if sys.version_info < (2, 7):
         requirements.append('argparse')
     
-    print(f"REQUIREMENTS: {requirements}")
+    # print(f"REQUIREMENTS: {requirements}")
     return requirements
 
 # Copy version file to package if it exists
