@@ -24,16 +24,28 @@ Features:
 from __future__ import print_function
 
 import os
+#print(f"os.getenv('DEBUG') [make_colors-1]: {os.getenv('DEBUG')}")
 import sys
 import traceback
 
 tprint = None  # type: ignore
 
+APP_NAME = 'make_colors'
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'CRITICAL')
 SHOW_LOGGING = False
 
+def is_debug():
+    if str(os.getenv(f'{APP_NAME.upper()}_DEBUG', '0')).lower() in ('1', 'true', 'yes', 'on'):
+        return True
+    elif '--debug' in sys.argv[1:]:
+        return True
+
+    return False
+
+#print(f"os.getenv('DEBUG') [make_colors-2]: {os.getenv('DEBUG')}")
+
 # if len(sys.argv) > 1 and any('--debug' == arg for arg in sys.argv):
-if len(sys.argv) > 1 and '--debug' in sys.argv[1:]:
+if is_debug():
     print("🐞 Debug mode enabled [make_colors]")
     os.environ["DEBUG"] = "1"
     os.environ['LOGGING'] = "1"
@@ -47,12 +59,7 @@ else:
     os.environ['NO_LOGGING'] = "1"
     SHOW_LOGGING = False
 
-if os.getenv('MAKE_COLORS_DEBUG', False) and str(os.getenv('MAKE_COLORS_DEBUG', False)).lower() not in ['1', 'true', 'ok', 'yes', 'on']:
-    os.environ.pop('NO_LOGGING', None)
-    os.environ.pop('MAKE_COLORS_DEBUG', None)
-    os.environ.pop('LOGGING', None)
-    LOG_LEVEL = "CRITICAL"
-    SHOW_LOGGING = False
+#print(f"os.getenv('DEBUG') [make_colors-3]: {os.getenv('DEBUG')}")
 
 exceptions = ['requests']
 
@@ -91,6 +98,7 @@ import re
 from typing import List, Tuple, Optional, ClassVar
 import argparse
 
+#print(f"os.getenv('DEBUG') [make_colors-4]: {os.getenv('DEBUG')}")
 # try:
 #     from .colors import __all__ as colors_all
 # except Exception as e:
@@ -152,6 +160,8 @@ try:
     from .hex2ansi import hex_to_ansi  # type: ignore
 except:
     from hex2ansi import hex_to_ansi  # type: ignore
+
+#print(f"os.getenv('DEBUG') [make_colors-5]: {os.getenv('DEBUG')}")
 
 class MakeColors(object):
     """A comprehensive class that provides methods for generating colored text output 
@@ -2211,18 +2221,15 @@ def usage():
             except:
                 test()
 
+#print(f"os.getenv('DEBUG') [make_colors-6]: {os.getenv('DEBUG')}")
+
 try:
     
-    os.environ.pop('DEBUG', None)
     os.environ['NO_LOGGING'] = '1'
     os.environ.pop('LOGGING', None)
     
     from richcolorlog import setup_logging, print_exception as tprint  # type: ignore
     logger = setup_logging('make_colors', exceptions=exceptions, level=LOG_LEVEL, show=SHOW_LOGGING)
-    
-    os.environ.pop('DEBUG', None)
-    os.environ['NO_LOGGING'] = '1'
-    os.environ.pop('LOGGING', None)
     
 except:
     traceback.print_exc()
@@ -2237,6 +2244,8 @@ except:
         from custom_logging import get_logger  # type: ignore
         
     logger = get_logger('make_colors', level=getattr(logging, LOG_LEVEL.upper(), logging.CRITICAL))
+
+#print(f"os.getenv('DEBUG') [make_colors-7]: {os.getenv('DEBUG')}")
 
 if __name__ == '__main__':
     usage()
